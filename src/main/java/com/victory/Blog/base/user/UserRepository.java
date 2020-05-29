@@ -1,8 +1,7 @@
 package com.victory.Blog.base.user;
 
-import com.victory.Blog.base.user.User;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
 }

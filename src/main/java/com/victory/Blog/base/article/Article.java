@@ -1,10 +1,7 @@
 package com.victory.Blog.base.article;
 
-import com.victory.Blog.base.user.User;
-
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "Article")
@@ -24,7 +21,7 @@ public class Article {
     private String status;
 
     @Column(name = "author_id")
-   // @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id")
     private Integer author_id;
 
     @Column(name = "created_at")
