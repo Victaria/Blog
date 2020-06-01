@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Регистрация</title>
+    <style>
+        form {
+            width: 300px;
+            margin: auto;
+        }
+        input{
+            width: 300px;
+            margin: 5px auto;
+        }
+        input[type="text"]{
+            width: 294px;
+        }
+        h2{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<form th:action="@{/register}" method="post">
+    <h2>Registration</h2>
+    Fist Name:<br>
+    <input type="text" name="firstname" placeholder="Firstname">
+    Surname:<br>
+    <input type="text"  name="surname" placeholder="Surname">
+    E-mail:<br>
+    <input type="text"  name="email" placeholder="E-mail">
+    <br>
+    Password:<br>
+    <input type="text"  name="password1" placeholder="Password">
+    Repeat password:<br>
+    <input type="text" name="password2" placeholder="Repeat password">
+    <br>
+    <input type="submit" value="Registration"><br>
+    <a style="font-size: 14px" th:href="@{/login}">Do you have account? Login</a>
+</form>
+
+</body>
+</html>

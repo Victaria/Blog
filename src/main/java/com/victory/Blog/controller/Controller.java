@@ -1,4 +1,4 @@
-package com.victory.Blog;
+package com.victory.Blog.controller;
 
 import com.victory.Blog.base.article.Article;
 import com.victory.Blog.base.article.ArticleRepository;
@@ -7,7 +7,9 @@ import com.victory.Blog.base.comment.CommentRepository;
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Date;
 import java.util.List;
@@ -31,7 +33,7 @@ public class Controller {
         user.setFirstname(first_name);
         user.setEmail(email);
         user.setLastname(last_name);
-        user.setCreated_at(Date.valueOf("1995-12-11"));
+        user.setCreated_at(Date.valueOf("2019-12-11"));
         userRepository.save(user);
         return "Saved";
     }
@@ -64,16 +66,23 @@ public class Controller {
         return commentRepository.findByPostId(post_id);
     }
 
-   /* @GetMapping(value = "/main")
-    public  String  getMainPage(Model model) {
+    @PostMapping("/articles")
+    Article newArticle(@RequestBody Article article) {
+        return articleRepository.save(article);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id) {
+        articleRepository.deleteById(id);
+        return "";
+    }
+
+    @GetMapping(value = "/main")
+    public ModelAndView getMainPage() {
         // This returns a JSON or XML with public articles
-        List<Article> articles = new ArrayList<>();
-        for (Article article : articleRepository.findAll()){
-            if (article.getStatus().equalsIgnoreCase("public")){
-                articles.add(article);
-            }
-        }
-          model.addAttribute("articles", articles);
-        return "main";
-    }*/
+        ModelAndView mav = new ModelAndView("main");
+        mav.addObject("articles", articleRepository.findPublicArticles());
+        return mav;
+    }
 }
