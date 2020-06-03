@@ -65,8 +65,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
 
         httpSecurity.antMatcher("/blog/articles/**").antMatcher("/blog/all")
                 .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/blog/main")
+                .failureUrl("/login?error")
                 .and()
                 .httpBasic();
+        
         httpSecurity
                 .authorizeRequests()
                 .antMatchers("/all", "/authenticate")
@@ -77,7 +81,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-               /* .csrf().disable()
+
+        /* .csrf().disable()
                 .authorizeRequests().antMatchers("/authenticate", "/articles/{post_id}/comments").permitAll()
                 .anyRequest().authenticated()
                 .and()

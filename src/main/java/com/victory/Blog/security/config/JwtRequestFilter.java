@@ -19,9 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Nimmt HTTP-Requests entgegen und prüft, ob Sender authentifiziert ist
- * Entwerder durch einen Bearer-Token (JWT-Token) oder durch
- * Benutzername und Passwort
+ * Receives HTTP requests and checks whether
+ * the sender is authenticated by a bearer token (JWT token)
+ * or by email and password
  */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -100,7 +100,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 //Debug,
-                System.out.println("User " + email + " wurde authentifiziert");
+                System.out.println("User " + email + " has been authenticated");
 
                 // Inform the SecurityContextHolder that the user is authenticated and may pass the filter
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

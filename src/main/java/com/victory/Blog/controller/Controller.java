@@ -8,9 +8,12 @@ import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.util.List;
 
@@ -54,16 +57,21 @@ public class Controller {
 
     @GetMapping(path = "/articles")
     public @ResponseBody
-    List<Article> getAllArticles() {
-        return articleRepository.findPublicArticles();
+    ModelAndView getAllArticles() {
+        // This returns a JSON or XML with public articles
+        ModelAndView mav = new ModelAndView("articles/main");
+        mav.addObject("articles", articleRepository.findPublicArticles());
+        return mav;
     }
 
     //localhost:8080/blog/articles/1/comments
     @GetMapping(path = "/articles/{post_id}/comments")
     public @ResponseBody
-    List<Comment> getCommentsByPostId(@PathVariable("post_id") Integer post_id) {
+    ModelAndView getCommentsByPostId(@PathVariable("post_id") Integer post_id) {
         // This returns a JSON or XML with the user
-        return commentRepository.findByPostId(post_id);
+        ModelAndView mav = new ModelAndView("articles/comments");
+        mav.addObject("comments", commentRepository.findByPostId(post_id));
+        return mav;
     }
 
     @PostMapping("/articles")
@@ -78,11 +86,4 @@ public class Controller {
         return "";
     }
 
-    @GetMapping(value = "/main")
-    public ModelAndView getMainPage() {
-        // This returns a JSON or XML with public articles
-        ModelAndView mav = new ModelAndView("main");
-        mav.addObject("articles", articleRepository.findPublicArticles());
-        return mav;
-    }
 }

@@ -9,8 +9,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -35,6 +39,11 @@ public class JwtUserDetailsService implements UserDetailsService {
         User newUser = new User();
         newUser.setEmail(user.getEmail());
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+        newUser.setFirstname(user.getFirstname());
+        newUser.setLastname(user.getLastname());
+        newUser.setConfirmed(false);
+        newUser.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
+        System.out.println("HERE **********************");
         return userRepository.save(newUser);
     }
 

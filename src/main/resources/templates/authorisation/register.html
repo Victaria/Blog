@@ -1,0 +1,133 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
+<head>
+    <meta charset="utf-8">
+    <title>Регистрация</title>
+    <style>
+        form {
+            width: 300px;
+            margin: auto;
+        }
+
+        input {
+            width: 300px;
+            margin: 5px auto;
+        }
+
+        input[type="text"] {
+            width: 294px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+        /* Header */
+
+        #header {
+            width: 920px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+        }
+
+        #logo {
+            float: left;
+            height: 80px;
+            padding: 0 35px;
+        }
+
+        #logo h1 {
+            font-size: 38px;
+            color: #FFFFFF;
+        }
+
+        #logo h1 sup {
+            vertical-align: text-top;
+            font-size: 24px;
+        }
+
+        #logo h1 a {
+            color: #5b5b5b;
+        }
+
+        #logo h2 {
+            text-transform: uppercase;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #999999;
+        }
+
+        #logo a {
+            text-decoration: none;
+        }
+
+        /* Menu */
+
+        #menu {
+            float: right;
+            padding-right: 30px;
+        }
+
+        #menu ul {
+            margin: 0;
+            padding: 15px 0 0 0;
+            list-style: none;
+        }
+
+        #menu li {
+            display: inline;
+        }
+
+        #menu a {
+            display: block;
+            float: left;
+
+            margin-left: 5px;
+            padding: 5px 20px;
+            text-decoration: none;
+            font-size: 13px;
+            color: #999999;
+        }
+
+        #menu a:hover {
+            border-bottom: 3px #999999 solid;
+            text-decoration: none;
+        }
+
+        #menu .active a {
+            border-bottom: 3px #999999 solid;
+        }
+    </style>
+</head>
+<body>
+
+<form action="#" th:action="@{/registerProcess}" th:object="${user}" method="post">
+    <div id="header">
+        <div id="logo">
+            <h1><a href="">Victory's Blog<sup></sup></a></h1>
+        </div>
+        <div id="menu">
+            <ul>
+                <li><a th:href="@{/blog/articles}">home</a></li>
+                <li><a href="#">my profile</a></li>
+                <li class="active"><a href="#">login</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>Registration</h2>
+    Fist Name:<br>
+    <input type="text" th:field="*{firstname}" placeholder="Firstname">
+    Surname:<br>
+    <input type="text" th:field="*{lastname}" placeholder="lastname">
+    E-mail:<br>
+    <input type="text" th:field="*{email}" name="email" placeholder="E-mail">
+    <br>
+    Password:<br>
+    <input type="text" th:field="*{password}" name="password1" placeholder="Password">
+    <br>
+    <input type="submit" value="Registration"><br>
+    <a style="font-size: 14px" th:href="@{/login}">Do you have account? Login</a>
+</form>
+
+</body>
+</html>

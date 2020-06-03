@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://java.sun.com/xml/ns/javaee"
+      xsi:schemaLocation="http://www.thymeleaf.org " uri="http://www.springframework.org/tags">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <!-- <link th:href="@{../basicStyle.css}" rel="stylesheet"/>-->
+    <title>Victory's Blog</title>
+    <style>
+        body {
+            margin: 30px 0 0 0;
+            padding: 0;
+            background: #FFFFFF;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            color: #8A8A8A;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", Times, serif;
+            text-transform: lowercase;
+            font-weight: normal;
+        }
+
+        h1 {
+            letter-spacing: -1px;
+            font-size: 32px;
+        }
+
+        h2 {
+            font-size: 23px;
+        }
+
+        p, ul, ol {
+            margin: 0 0 2em 0;
+            text-align: justify;
+            line-height: 26px;
+        }
+
+        a:link {
+            color: #333333;
+        }
+
+        a:hover, a:active {
+            text-decoration: none;
+            color: #333333;
+        }
+
+        a:visited {
+            color: #F161B2;
+        }
+
+        /* Form */
+        form {
+            margin: 0;
+            padding: 0;
+        }
+
+        fieldset {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        legend {
+            display: none;
+        }
+
+        input, textarea, select {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            color: #333333;
+        }
+
+        /* Header */
+
+        #header {
+            width: 920px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+        }
+
+        #logo {
+            float: left;
+            height: 80px;
+            padding: 0 35px;
+        }
+
+        #logo h1 {
+            font-size: 38px;
+            color: #FFFFFF;
+        }
+
+        #logo h1 sup {
+            vertical-align: text-top;
+            font-size: 24px;
+        }
+
+        #logo h1 a {
+            color: #5b5b5b;
+        }
+
+        #logo h2 {
+            text-transform: uppercase;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #999999;
+        }
+
+        #logo a {
+            text-decoration: none;
+        }
+
+        /* Menu */
+
+        #menu {
+            float: right;
+            padding-right: 30px;
+        }
+
+        #menu ul {
+            margin: 0;
+            padding: 15px 0 0 0;
+            list-style: none;
+        }
+
+        #menu li {
+            display: inline;
+        }
+
+        #menu a {
+            display: block;
+            float: left;
+
+            margin-left: 5px;
+            padding: 5px 20px;
+            text-decoration: none;
+            font-size: 13px;
+            color: #999999;
+        }
+
+        #menu a:hover {
+            border-bottom: 3px #999999 solid;
+            text-decoration: none;
+        }
+
+        #menu .active a {
+            border-bottom: 3px #999999 solid;
+        }
+
+
+        #wrapper {
+            border-top: 1px dotted #CCCCCC;
+        }
+
+        /* Page */
+
+        #page {
+            width: 850px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        /* Content */
+
+        #content {
+            float: left;
+            width: 600px;
+        }
+
+        /* Post */
+
+        .post {
+        }
+
+        .post .title {
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 3px #999999 solid;
+        }
+
+        .post .entry {
+        }
+
+        .post .meta {
+            padding: 15px 0 60px 0;
+        }
+
+        .post .meta p {
+            margin: 0;
+            line-height: normal;
+            color: #FFFFFF;
+        }
+
+        .post .meta .byline {
+            float: left;
+        }
+
+        .post .meta .links {
+            float: right;
+        }
+
+        .post .meta .more {
+            padding: 0 20px 0 18px;
+        }
+
+        .post .meta .comments {
+            padding-left: 22px;
+        }
+
+        .post .meta b {
+            display: none;
+        }
+
+        /* Sidebar */
+
+        #sidebar {
+            float: right;
+            width: 210px;
+        }
+
+        #sidebar ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #sidebar li {
+            margin-bottom: 40px;
+        }
+
+        #sidebar li ul {
+        }
+
+        #sidebar li li {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        #sidebar h2 {
+            margin-bottom: 10px;
+            border-bottom: 3px #999999 solid;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        /* Search */
+
+        #search {
+        }
+
+        #search h2 {
+            margin-bottom: 20px;
+        }
+
+        #s {
+            width: 120px;
+            margin-right: 5px;
+            padding: 3px;
+            border: 1px solid #F0F0F0;
+        }
+
+        #x {
+            padding: 3px;
+            border: none;
+            text-transform: lowercase;
+            font-size: 11px;
+            color: #4F4F4F;
+        }
+
+        /* Footer */
+
+        #footer {
+            width: 920px;
+            height: 400px;
+            margin: 0 auto;
+            min-height: 74px;
+            padding: 10px 0 0 0;
+            border-top: 3px #999999 solid;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        html > body #footer {
+            height: auto;
+        }
+
+        #legal {
+            clear: both;
+            padding-top: 20px;
+            text-align: center;
+            color: #573F41;
+            size: 20px;
+        }
+    </style>
+</head>
+<body>
+<form th:action="@{/showArticles}" method="post">
+    <!-- start header -->
+    <div id="header">
+        <div id="logo">
+            <h1><a href="">Victory's Blog<sup></sup></a></h1>
+        </div>
+        <div id="menu">
+            <ul>
+                <li class="active"><a href="#"> home</a></li>
+                <li><a href="#">my profile</a></li>
+                <li><a th:href="@{/login}">login</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- end header -->
+
+    <div id="wrapper">
+        <!-- start page -->
+        <div id="page">
+            <!-- start content -->
+            <div id="content">
+                <div class="post" th:each="article : ${articles}">
+                    <h1 class="title" th:text="${article.title}"></h1>
+                    <h5 th:text="${article.author_id}"></h5>
+                    <div class="entry">
+                        <p th:text="${article.text}"></p>
+                    </div>
+                    <div class="meta">
+                        <p class="byline" th:text="${article.created_at}"></p>
+                        <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
+                            <a th:href="@{/blog/articles/${article.id}/comments}" class="comments">Comments</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- end content -->
+            <!-- start sidebar -->
+            <div id="sidebar">
+                <ul>
+                    <li id="search">
+                        <h2><b class="text1">Search</b></h2>
+                        <form method="get" action="">
+                            <fieldset>
+                                <input type="text" id="s" name="s" value=""/>
+                                <input type="submit" id="x" value="Search"/>
+                            </fieldset>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            <!-- end sidebar -->
+            <div style="clear: both;">&nbsp;</div>
+        </div>
+    </div>
+    <div id="footer">
+        <p id="legal">(c) 2020 Victory's Blog.</p>
+    </div>
+</form>
+</body>
+</html>

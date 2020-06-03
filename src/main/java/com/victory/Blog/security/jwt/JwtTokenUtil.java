@@ -10,9 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,8 +19,8 @@ public class JwtTokenUtil implements Serializable {
     //Token is 24 hour valid
     public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60 * 1000;
 
-    //Secret to sign JWT
-    // @Value("${jwt.secret}")
+    // Secret to sign JWT
+     @Value("${jwt.secret}")
     private String SIGNING_KEY;
 
     private static final String AUTHORITIES_KEY = "scopes";
@@ -34,7 +32,7 @@ public class JwtTokenUtil implements Serializable {
      * @return String username
      */
     public String getEmailFromToken(String token) {
-
+        System.out.println("Email ***");
         return getClaimFromToken(token, Claims::getSubject);
 
     }
@@ -99,6 +97,7 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.builder()
                 .setSubject(authentication.getName()) // Username
                 .claim(AUTHORITIES_KEY, authorities) // Role
+                .claim("HASH", authorities.hashCode())
                 .signWith(SignatureAlgorithm.HS256, SIGNING_KEY) // Signature
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Date of issue
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY)) // Expiry Date
