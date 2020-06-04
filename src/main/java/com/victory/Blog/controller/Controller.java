@@ -7,6 +7,7 @@ import com.victory.Blog.base.comment.CommentRepository;
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class Controller {
         return "Saved";
     }
 
+    @Secured("USER")
     @GetMapping(path = "/all")
     public @ResponseBody
     Iterable<User> getAllUsers() {
@@ -48,6 +50,7 @@ public class Controller {
         return userRepository.findAll();
     }
 
+    @Secured("USER")
     @GetMapping(path = "/getUser")
     public @ResponseBody
     User getUserByEmail(@RequestParam("email") String email) {
@@ -79,7 +82,7 @@ public class Controller {
         return articleRepository.save(article);
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @Secured("USER")
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id) {
         articleRepository.deleteById(id);

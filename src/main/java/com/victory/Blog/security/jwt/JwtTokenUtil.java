@@ -97,7 +97,6 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.builder()
                 .setSubject(authentication.getName()) // Username
                 .claim(AUTHORITIES_KEY, authorities) // Role
-                .claim("HASH", authorities.hashCode())
                 .signWith(SignatureAlgorithm.HS256, SIGNING_KEY) // Signature
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Date of issue
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY)) // Expiry Date
