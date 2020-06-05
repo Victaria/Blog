@@ -7,14 +7,19 @@ import com.victory.Blog.base.comment.CommentRepository;
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.sql.Date;
 import java.util.List;
 
@@ -42,7 +47,7 @@ public class Controller {
         return "Saved";
     }
 
-    @Secured("USER")
+    @Secured("ROLE_USER")
     @GetMapping(path = "/all")
     public @ResponseBody
     Iterable<User> getAllUsers() {
@@ -50,7 +55,7 @@ public class Controller {
         return userRepository.findAll();
     }
 
-    @Secured("USER")
+    @Secured("ROLE_USER")
     @GetMapping(path = "/getUser")
     public @ResponseBody
     User getUserByEmail(@RequestParam("email") String email) {
@@ -82,11 +87,28 @@ public class Controller {
         return articleRepository.save(article);
     }
 
-    @Secured("USER")
+    @Secured("ROLE_USER")
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id) {
         articleRepository.deleteById(id);
         return "";
+    }
+
+   // @PreAuthorize()
+    @GetMapping("/my")
+    public @ResponseBody
+    ModelAndView showUserProfile(@NonNull Principal principal) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println(authentication);
+        if (authentication != null) {
+            ModelAndView mav = new ModelAndView("afterAuth/profile");
+            mav.addObject("articles", articleRepository.findByAuthorId(userRepository.findByEmail(authentication.getName()).getId()));
+            mav.addObject("user", userRepository.findByEmail(authentication.getName()));
+            return mav;
+        } else {
+            return new ModelAndView("articles/main");
+        }
     }
 
 }

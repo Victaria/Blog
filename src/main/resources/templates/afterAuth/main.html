@@ -307,7 +307,7 @@
             <ul>
                 <li class="active"><a th:href="@{/blog/articles}">home</a></li>
                 <li><a th:href="@{/blog/my}">my profile</a></li>
-                <li><a th:href="@{/login}">login</a></li>
+                <li><a th:href="@{/logout}">logout</a></li>
             </ul>
         </div>
     </div>
@@ -319,13 +319,13 @@
             <!-- start content -->
             <div id="content">
                 <div class="post" th:each="article : ${articles}">
-                    <h1 class="title" th:text="${article.title}"></h1>
-                    <h5 th:text="${article.author_id}"></h5>
+                    <h1 class="title" th:text="*{title}"></h1>
+                    <h5 th:text="*{author_id}"></h5>
                     <div class="entry">
-                        <p th:text="${article.text}"></p>
+                        <p th:text="*{text}"></p>
                     </div>
                     <div class="meta">
-                        <p class="byline" th:text="${article.created_at}"></p>
+                        <p class="byline" th:text="*{created_at}"></p>
                         <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
                             <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Comments</a>
                         </p>

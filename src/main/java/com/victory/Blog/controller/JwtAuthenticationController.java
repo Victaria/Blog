@@ -1,5 +1,6 @@
 package com.victory.Blog.controller;
 
+import com.victory.Blog.base.article.ArticleRepository;
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import com.victory.Blog.security.auth.EmailService;
@@ -13,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +37,9 @@ public class JwtAuthenticationController {
     UserRepository userRepository;
 
     @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
     EmailService mailer = new EmailService();
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -52,7 +53,7 @@ public class JwtAuthenticationController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> createAuthenticationToken(@ModelAttribute JwtRequest authenticationRequest) throws Exception {
+    public ModelAndView createAuthenticationToken(@ModelAttribute JwtRequest authenticationRequest) throws Exception {
 
         //Debug
         System.out.println("Bin in der mapping methode");
@@ -63,7 +64,11 @@ public class JwtAuthenticationController {
 
         final String token = jwtTokenUtil.generateToken(auth);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        ModelAndView mav = new ModelAndView("afterAuth/profile");
+        mav.addObject("articles", articleRepository.findByAuthorId(userRepository.findByEmail(auth.getName()).getId()));
+        mav.addObject("user", userRepository.findByEmail(auth.getName()));
+
+        return mav;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
