@@ -3,10 +3,14 @@ package com.victory.Blog.base.user;
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import java.security.SecureRandom;
 import java.sql.Date;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Table(name = "User")
+//@RedisHash("User")
 public class User {
     @Id
     @Column(name = "id")
@@ -86,5 +90,23 @@ public class User {
 
     public void setConfirmed(Boolean confirmed) {
         isConfirmed = confirmed;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof User)) {
+            return false;
+        }
+        User user = (User) obj;
+
+        return Objects.equals(firstname, user.firstname) &&
+                Objects.equals(lastname, user.lastname) &&
+                Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstname, lastname, email);
     }
 }

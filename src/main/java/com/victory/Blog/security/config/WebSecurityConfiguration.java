@@ -73,8 +73,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
         
         httpSecurity
                 .authorizeRequests()
-                .antMatchers("/all", "/authenticate")
-                .permitAll()
+                .antMatchers("/all", "/delete/{id}", "/my").hasRole("USER")
                 .anyRequest()
                 .authenticated()
                 .and()

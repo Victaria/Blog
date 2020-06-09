@@ -2,26 +2,19 @@ package com.victory.Blog.controller;
 
 import com.victory.Blog.base.article.Article;
 import com.victory.Blog.base.article.ArticleRepository;
-import com.victory.Blog.base.comment.Comment;
 import com.victory.Blog.base.comment.CommentRepository;
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
+import javax.servlet.http.HttpSession;
 import java.sql.Date;
-import java.util.List;
 
 @org.springframework.stereotype.Controller
 @RequestMapping(path = "/blog")
@@ -65,17 +58,28 @@ public class Controller {
 
     @GetMapping(path = "/articles")
     public @ResponseBody
-    ModelAndView getAllArticles() {
+    ModelAndView getAllArticles(HttpSession session) {
         // This returns a JSON or XML with public articles
-        ModelAndView mav = new ModelAndView("articles/main");
+
+        ModelAndView mav = new ModelAndView("articles/main");;
+
+        if (session.getAttribute("email") != null) {
+
+            mav = new ModelAndView("afterAuth/main");
+
+            mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
+
+        }
+
         mav.addObject("articles", articleRepository.findPublicArticles());
+
         return mav;
     }
 
     //localhost:8080/blog/articles/1/comments
     @GetMapping(path = "/articles/{post_id}/comments")
     public @ResponseBody
-    ModelAndView getCommentsByPostId(@PathVariable("post_id") Integer post_id) {
+    ModelAndView getCommentsByPostId(@PathVariable("post_id") Integer post_id, HttpSession session) {
         // This returns a JSON or XML with the user
         ModelAndView mav = new ModelAndView("articles/comments");
         mav.addObject("comments", commentRepository.findByPostId(post_id));
@@ -83,31 +87,34 @@ public class Controller {
     }
 
     @PostMapping("/articles")
-    Article newArticle(@RequestBody Article article) {
+    Article newArticle(@RequestBody Article article, HttpSession session) {
         return articleRepository.save(article);
     }
 
     @Secured("ROLE_USER")
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
+    public ModelAndView delete(@PathVariable Integer id, HttpSession session) {
         articleRepository.deleteById(id);
-        return "";
+        return new ModelAndView("redirect:/blog/my");
     }
 
-   // @PreAuthorize()
+    // @PreAuthorize("hasRole('USER')")
+    // @Secured("USER")
     @GetMapping("/my")
     public @ResponseBody
-    ModelAndView showUserProfile(@NonNull Principal principal) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    ModelAndView showUserProfile(@NonNull Authentication authentication, HttpSession session) {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        System.out.println(authentication);
-        if (authentication != null) {
+        System.out.println(session.getAttribute("email"));
+
+        if (session.getAttribute("email") != null) {
             ModelAndView mav = new ModelAndView("afterAuth/profile");
-            mav.addObject("articles", articleRepository.findByAuthorId(userRepository.findByEmail(authentication.getName()).getId()));
-            mav.addObject("user", userRepository.findByEmail(authentication.getName()));
+            mav.addObject("articles", articleRepository.findByAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId()));
+            mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
+            mav.addObject("templates",  articleRepository.findDraftByAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId()));
             return mav;
         } else {
-            return new ModelAndView("articles/main");
+            return new ModelAndView("redirect:/blog/articles");
         }
     }
 

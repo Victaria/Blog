@@ -289,6 +289,9 @@
             <h1><a href="">Victory's Blog<sup></sup></a></h1>
         </div>
         <div id="menu">
+            <div class="name" th:object="${user}">
+                <h1 th:text="*{firstname} + ' ' + *{lastname}"></h1>
+            </div>
             <ul>
                 <li><a th:href="@{/blog/articles}">home</a></li>
                 <li class="active"><a th:href="@{/blog/my}">my profile</a></li>
@@ -302,9 +305,21 @@
         <!-- start page -->
         <div id="page">
             <br>
-            <p><textarea style="resize: none; width: 260px; height: 20px" placeholder="Enter your title ..."></textarea></p>
+            <p>Create new post or use your template: </p>
+            <div th:object="${templates}">
+            <select>
+                <option value=""> -- </option>
+                <option th:each="key : ${templates}"
+                        th:value="${key.id}"
+                        th:utext="${key.title}">
+                </option>
+            </select>
+            </div>
+            <p><textarea style="resize: none; width: 260px; height: 20px" placeholder="Enter your title ..."></textarea>
+            </p>
             <p><textarea style="resize: none; width: 450px; height: 20px" placeholder="Enter tags ..."></textarea></p>
-            <p><textarea style="resize: none; width: 600px; height: 80px" placeholder="Enter your article ..."></textarea></p>
+            <p><textarea style="resize: none; width: 600px; height: 80px"
+                         placeholder="Enter your article ..."></textarea></p>
             <p><input type="submit" value="Save"></p>
             <br>
             <!-- start content -->
@@ -325,7 +340,8 @@
                             <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Edit</a>
                         </p> <b>|</b>
                         <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
-                            <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Comments</a>
+                            <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
+                               class="comments">Comments</a>
                         </p>
                     </div>
                 </div>
