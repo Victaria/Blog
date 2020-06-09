@@ -1,5 +1,7 @@
 package com.victory.Blog.base.article;
 
+import com.victory.Blog.base.user.User;
+
 import javax.persistence.*;
 import java.sql.Date;
 
@@ -21,7 +23,8 @@ public class Article {
     private String status;
 
     @Column(name = "author_id")
-    @JoinColumn(name = "author_id")
+   /* @ManyToOne
+    @JoinColumn(name = "author_id")*/
     private Integer author_id;
 
     @Column(name = "created_at")
@@ -85,4 +88,12 @@ public class Article {
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
+
+   /* public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }*/
 }

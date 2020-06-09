@@ -282,7 +282,7 @@
     </style>
 </head>
 <body>
-<form th:action="@{/showArticles}" method="post">
+<!--<form th:action="@{/showArticles}" method="post">-->
     <!-- start header -->
     <div id="header">
         <div id="logo">
@@ -299,60 +299,65 @@
             </ul>
         </div>
     </div>
-    <!-- end header -->
+<!--</form> -->
+<!-- end header -->
 
-    <div id="wrapper">
-        <!-- start page -->
-        <div id="page">
-            <br>
-            <p>Create new post or use your template: </p>
-            <div th:object="${templates}">
+<div id="wrapper">
+    <!-- start page -->
+    <div id="page">
+        <br>
+        <p>Create new post or use your template: </p>
+        <div th:object="${templates}">
             <select>
-                <option value=""> -- </option>
+                <option value=""> --</option>
                 <option th:each="key : ${templates}"
                         th:value="${key.id}"
                         th:utext="${key.title}">
                 </option>
             </select>
-            </div>
-            <p><textarea style="resize: none; width: 260px; height: 20px" placeholder="Enter your title ..."></textarea>
-            </p>
-            <p><textarea style="resize: none; width: 450px; height: 20px" placeholder="Enter tags ..."></textarea></p>
-            <p><textarea style="resize: none; width: 600px; height: 80px"
-                         placeholder="Enter your article ..."></textarea></p>
-            <p><input type="submit" value="Save"></p>
-            <br>
-            <!-- start content -->
-            <div id="content">
-                <div class="name" th:object="${user}">
-                    <h1 th:text="*{firstname} + ' ' + *{lastname}"></h1>
-                </div>
-                <br>
-                <div class="post" th:each="article : ${articles}">
-                    <h2 class="title" th:text="${article.title}"></h2>
-                    <h5 th:text="'Author:  ' + ${user.firstname} + ' ' + ${user.lastname}"></h5>
-                    <div class="entry">
-                        <p th:text="${article.text}"></p>
-                    </div>
-                    <div class="meta">
-                        <p class="byline" th:text="${article.created_at}"></p>
-                        <p class="links"><a href="#" class="more">Delete article</a> <b>|</b>
-                            <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Edit</a>
-                        </p> <b>|</b>
-                        <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
-                            <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
-                               class="comments">Comments</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- end content -->
-            <div style="clear: both;">&nbsp;</div>
         </div>
+        <form th:action="@{/blog/articles}" th:object="${articleRequest}" method="post">
+            <p><textarea th:field="*{title}" style="resize: none; width: 260px; height: 20px"
+                         placeholder="Enter your title ..."></textarea>
+            </p>
+            <p><textarea th:field="*{tags}" style="resize: none; width: 450px; height: 20px"
+                         placeholder="Enter tags ..."></textarea></p>
+            <p><textarea th:field="*{text}" style="resize: none; width: 600px; height: 80px"
+                         placeholder="Enter your article ..."></textarea></p>
+            <p><input type="submit" value="Send"></p>
+        </form>
+        <p ></p>
+        <br>
+        <!-- start content -->
+        <div id="content">
+            <div class="name" th:object="${user}">
+                <h1 th:text="*{firstname} + ' ' + *{lastname}"></h1>
+            </div>
+            <br>
+            <div class="post" th:each="article : ${articles}">
+                <h2 class="title" th:text="${article.title}"></h2>
+                <h5 th:text="'Author:  ' + ${user.firstname} + ' ' + ${user.lastname}"></h5>
+                <div class="entry">
+                    <p th:text="${article.text}"></p>
+                </div>
+                <div class="meta">
+                    <p class="byline" th:text="${article.created_at}"></p>
+                    <p class="links"><a href="#" class="more">Delete article</a> <b>|</b>
+                        <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Edit</a>
+                    </p> <b>|</b>
+                    <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
+                        <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
+                           class="comments">Comments</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- end content -->
+        <div style="clear: both;">&nbsp;</div>
     </div>
-    <div id="footer">
-        <p id="legal">(c) 2020 Victory's Blog.</p>
-    </div>
-</form>
+</div>
+<div id="footer">
+    <p id="legal">(c) 2020 Victory's Blog.</p>
+</div>
 </body>
 </html>

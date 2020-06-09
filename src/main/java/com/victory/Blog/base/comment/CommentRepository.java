@@ -10,4 +10,5 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Query("SELECT t FROM Comment t WHERE t.post_id = ?1 ")
     List<Comment> findByPostId(Integer post_id);
 
+    void deleteById(Integer integer);
 }

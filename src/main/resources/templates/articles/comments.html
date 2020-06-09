@@ -309,46 +309,57 @@
             </ul>
         </div>
     </div>
-    <!-- end header -->
+</form>
+<!-- end header -->
 
-    <div id="wrapper">
-        <!-- start page -->
-        <div id="page">
-            <!-- start content -->
-            <div id="content">
-                <div class="post" th:each="comment : ${comments}">
-                    <h1 class="title" th:text="${comment.author_id}"></h1>
-                    <h5 th:text="${comment.created_at}"></h5>
-                    <div class="entry">
-                        <p th:text="${comment.message}"></p>
-                    </div>
-                    <div class="meta">
-                        <p class="links"><a href="#" class="more">Delete comment</a></p>
-                    </div>
+<div id="wrapper">
+    <!-- start page -->
+    <div id="page">
+        <form th:action="@{'/blog/articles/' + ${postid} + '/comments'}" th:object="${newcomment}" method="post">
+            <div th:if="${user != null}">
+                <p th:text="${user.firstname} + ' ' + ${user.lastname}"></p>
+                <p><textarea th:field="*{message}" style="resize: none; width: 600px; height: 80px"
+                             placeholder="Enter your comment ..."></textarea></p>
+                <p><input type="submit" value="Save"></p>
+            </div>
+        </form>
+        <!-- start content -->
+        <div id="content">
+            <p th:if="${#lists.isEmpty(comments)}">there is no comments yet</p>
+            <div class="post" th:each="comment : ${comments}">
+                <h1 class="title" th:text="${comment.author_id}"></h1>
+                <h5 th:text="${comment.created_at}"></h5>
+                <div class="entry">
+                    <p th:text="${comment.message}"></p>
+                </div>
+                <div class="meta">
+                    <p class="links"><a th:if="${user != null}"
+                                        th:href="@{'/blog/delete/articles/' +${comment.post_id} + '/comments/' + ${comment.id}}"
+                                        class="more">Delete comment</a></p>
                 </div>
             </div>
-            <!-- end content -->
-            <!-- start sidebar -->
-            <div id="sidebar">
-                <ul>
-                    <li id="search">
-                        <h2><b class="text1">Search</b></h2>
-                        <form method="get" action="">
-                            <fieldset>
-                                <input type="text" id="s" name="s" value=""/>
-                                <input type="submit" id="x" value="Search"/>
-                            </fieldset>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-            <!-- end sidebar -->
-            <div style="clear: both;">&nbsp;</div>
         </div>
+        <!-- end content -->
+        <!-- start sidebar -->
+        <div id="sidebar">
+            <ul>
+                <li id="search">
+                    <h2><b class="text1">Search</b></h2>
+                    <form method="get" action="">
+                        <fieldset>
+                            <input type="text" id="s" name="s" value=""/>
+                            <input type="submit" id="x" value="Search"/>
+                        </fieldset>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <!-- end sidebar -->
+        <div style="clear: both;">&nbsp;</div>
     </div>
-    <div id="footer">
-        <p id="legal">(c) 2020 Victory's Blog.</p>
-    </div>
-</form>
+</div>
+<div id="footer">
+    <p id="legal">(c) 2020 Victory's Blog.</p>
+</div>
 </body>
 </html>
