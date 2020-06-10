@@ -59,19 +59,21 @@ public class JwtAuthenticationController {
     public ModelAndView createAuthenticationToken(@ModelAttribute JwtRequest authenticationRequest,
                                                   HttpSession session) throws Exception {
 
-        //Debug
-        System.out.println("Bin in der mapping methode");
-
         if (authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword()) != null) {
             Authentication auth = authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+            if (userRepository.findByEmail(authenticationRequest.getEmail()).getConfirmed()) {
+                SecurityContextHolder.getContext().setAuthentication(auth);
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                final String token = jwtTokenUtil.generateToken(auth);
 
-            final String token = jwtTokenUtil.generateToken(auth);
+                session.setAttribute("email", authenticationRequest.getEmail());
 
-            session.setAttribute("email", authenticationRequest.getEmail());
-
-            return new ModelAndView("redirect:/blog/my");
+                return new ModelAndView("redirect:/blog/my");
+            } else {
+                ModelAndView mav = new ModelAndView("authorisation/login", "authenticationRequest", new JwtRequest());
+                mav.addObject("error", "You did not confirm e-mail.");
+                return mav;
+            }
         } else {
             ModelAndView mav = new ModelAndView("authorisation/login", "authenticationRequest", new JwtRequest());
             mav.addObject("error", "E-mail or Password are incorrect.");
@@ -89,7 +91,8 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public @ResponseBody
     ModelAndView getRegisterForm() {
-        return new ModelAndView("authorisation/register", "user", new User());
+        ModelAndView mav = new ModelAndView("authorisation/register", "user", new User());
+        return mav;
     }
 
     @Transactional
@@ -100,22 +103,27 @@ public class JwtAuthenticationController {
     public @ResponseBody
     ModelAndView saveUser(@ModelAttribute SignUpRequest signUpRequest) throws Exception {
 
-        User user = new User();
-        user.setFirstname(signUpRequest.getFirstname());
-        user.setLastname(signUpRequest.getLastname());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(signUpRequest.getPassword());
+        if (userRepository.findByEmail(signUpRequest.getEmail()) == null) {
+            User user = new User();
+            user.setFirstname(signUpRequest.getFirstname());
+            user.setLastname(signUpRequest.getLastname());
+            user.setEmail(signUpRequest.getEmail());
+            user.setPassword(signUpRequest.getPassword());
 
-        userDetailsService.save(user);
+            userDetailsService.save(user);
 
-        final String token = signUpRequest.getHash();
+            final String token = signUpRequest.getHash();
 
-        mailer.sendMail(signUpRequest.getEmail(), "Dear " + user.getFirstname()
-                + ", please, confirm your email. " + '\n'
-                + "Follow this link: " + "http://localhost:8080/auth/confirm/" + token);
+            mailer.sendMail(signUpRequest.getEmail(), "Dear " + user.getFirstname()
+                    + ", please, confirm your email. " + '\n'
+                    + "Follow this link: " + "http://localhost:8080/auth/confirm/" + token);
 
-
-        return new ModelAndView("info/sentToEmail", "user", user);
+            return new ModelAndView("info/sentToEmail", "user", user);
+        } else {
+            ModelAndView mav = new ModelAndView("authorisation/register", "user", new User());
+            mav.addObject("error", "This email is already in use.");
+            return mav;
+        }
     }
 
     private Authentication authenticate(String email, String password) throws Exception {
@@ -126,12 +134,12 @@ public class JwtAuthenticationController {
             auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
         } catch (DisabledException e) {
-          //  throw new Exception("USER_DISABLED", e);
+            //  throw new Exception("USER_DISABLED", e);
             return null;
         } catch (BadCredentialsException e) {
             System.out.println("invalid cred");
             return null;
-           // throw new Exception("INVALID_CREDENTIALS", e);
+            // throw new Exception("INVALID_CREDENTIALS", e);
         }
 
         return auth;

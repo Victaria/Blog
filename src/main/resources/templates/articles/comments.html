@@ -315,7 +315,7 @@
 <div id="wrapper">
     <!-- start page -->
     <div id="page">
-        <form th:action="@{'/blog/articles/' + ${postid} + '/comments'}" th:object="${newcomment}" method="post">
+        <form th:action="@{'/blog/articles/' + ${post_id} + '/comments'}" th:object="${new_comment}" method="post">
             <div th:if="${user != null}">
                 <p th:text="${user.firstname} + ' ' + ${user.lastname}"></p>
                 <p><textarea th:field="*{message}" style="resize: none; width: 600px; height: 80px"
@@ -334,7 +334,7 @@
                 </div>
                 <div class="meta">
                     <p class="links"><a th:if="${user != null}"
-                                        th:href="@{'/blog/delete/articles/' +${comment.post_id} + '/comments/' + ${comment.id}}"
+                                        th:href="@{'/blog/articles/' +${comment.post_id} + '/comments/' + ${comment.id}}"
                                         class="more">Delete comment</a></p>
                 </div>
             </div>

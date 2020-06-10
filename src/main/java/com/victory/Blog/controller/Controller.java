@@ -5,7 +5,6 @@ import com.victory.Blog.base.article.ArticleRepository;
 import com.victory.Blog.base.article.ArticleRequest;
 import com.victory.Blog.base.comment.Comment;
 import com.victory.Blog.base.comment.CommentRepository;
-import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,36 +28,9 @@ public class Controller {
     @Autowired
     private CommentRepository commentRepository;
 
-    @PostMapping(path = "/add") // Map ONLY POST Requests
-    public @ResponseBody
-    String addNewUser(@RequestParam String first_name
-            , @RequestParam String email, @RequestParam String last_name
-            , @RequestParam Date created_at) {
-        User user = new User();
-        user.setFirstname(first_name);
-        user.setEmail(email);
-        user.setLastname(last_name);
-        user.setCreated_at(Date.valueOf("2019-12-11"));
-        userRepository.save(user);
-        return "Saved";
-    }
-
-    @Secured("ROLE_USER")
-    @GetMapping(path = "/all")
-    public @ResponseBody
-    Iterable<User> getAllUsers() {
-        // This returns a JSON or XML with the users
-        return userRepository.findAll();
-    }
-
-    @Secured("ROLE_USER")
-    @GetMapping(path = "/getUser")
-    public @ResponseBody
-    User getUserByEmail(@RequestParam("email") String email) {
-        // This returns a JSON or XML with the user
-        return userRepository.findByEmail(email);
-    }
-
+    /**
+     * Show all public articles
+     */
     @GetMapping(path = "/articles")
     public @ResponseBody
     ModelAndView getAllArticles(HttpSession session) {
@@ -77,7 +49,9 @@ public class Controller {
         return mav;
     }
 
-    //localhost:8080/blog/articles/1/comments
+    /**
+     * Get comments for post
+     */
     @GetMapping(path = "/articles/{post_id}/comments")
     public @ResponseBody
     ModelAndView getCommentsByPostId(@PathVariable int post_id, HttpSession session) {
@@ -87,14 +61,17 @@ public class Controller {
 
         if (session.getAttribute("email") != null) {
             mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
-            mav.addObject("postid", post_id);
-            mav.addObject("newcomment", new Comment());
+            mav.addObject("post_id", post_id);
+            mav.addObject("new_comment", new Comment());
         } else {
             mav.addObject("user", null);
         }
         return mav;
     }
 
+    /**
+     * Crate new article
+     */
     //@Secured("ROLE_USER")
     @Transactional
     @RequestMapping(value = "/articles", method = RequestMethod.POST,
@@ -116,25 +93,9 @@ public class Controller {
         return new ModelAndView("redirect:/blog/my");
     }
 
-    @Secured("ROLE_USER")
-    @GetMapping("/delete/articles/{post_id}/comments/{id}")
-    public @ResponseBody
-    ModelAndView delete(@PathVariable int post_id, @PathVariable int id, HttpSession session) {
-        int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
-        int commentAuthorId = commentRepository.getOne(id).getAuthor_id();
-
-        System.out.println(userId + "  " + postAuthorId + "  " + commentAuthorId);
-
-        if (userId == postAuthorId || userId == commentAuthorId) {
-            commentRepository.deleteById(id);
-        } else {
-            System.out.println("no rights");
-        }
-
-        return new ModelAndView("redirect:/blog/articles/" + post_id + "/comments");
-    }
-
+    /**
+     * Show user profile
+     */
     @GetMapping("/my")
     public @ResponseBody
     ModelAndView showUserProfile(@NonNull HttpSession session) {
@@ -154,7 +115,10 @@ public class Controller {
         }
     }
 
-        @RequestMapping(value = "/articles/{id}/comments", method = RequestMethod.POST,
+    /**
+     * Create comment
+     */
+    @RequestMapping(value = "/articles/{id}/comments", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     ModelAndView newComment(@PathVariable int id, @ModelAttribute Comment comment, HttpSession session) {
@@ -168,4 +132,48 @@ public class Controller {
         return new ModelAndView("redirect:/blog/articles/" + id + "/comments");
     }
 
+    /**
+     * Delete article
+     */
+    @Secured("ROLE_USER")
+    @Transactional
+    @RequestMapping(value = "/articles/{post_id}", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelAndView deleteArticle(@PathVariable int post_id, HttpSession session) {
+        int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
+        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
+
+        System.out.println(userId + "  " + postAuthorId);
+
+        if (userId == postAuthorId) {
+            articleRepository.deleteById(post_id);
+        } else {
+            System.out.println("no rights");
+        }
+
+        return new ModelAndView("redirect:/blog/my");
+    }
+
+
+    /**
+     * Delete comment
+     */
+    @Secured("ROLE_USER")
+    @RequestMapping(value = "/articles/{post_id}/comments/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelAndView deleteComment(@PathVariable int post_id, @PathVariable int id, HttpSession session) {
+        int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
+        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
+        int commentAuthorId = commentRepository.getOne(id).getAuthor_id();
+
+        System.out.println(userId + "  " + postAuthorId + "  " + commentAuthorId);
+
+        if (userId == postAuthorId || userId == commentAuthorId) {
+            commentRepository.deleteById(id);
+        } else {
+            System.out.println("no rights");
+        }
+
+        return new ModelAndView("redirect:/blog/articles/" + post_id + "/comments");
+    }
 }

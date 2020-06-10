@@ -283,22 +283,22 @@
 </head>
 <body>
 <!--<form th:action="@{/showArticles}" method="post">-->
-    <!-- start header -->
-    <div id="header">
-        <div id="logo">
-            <h1><a href="">Victory's Blog<sup></sup></a></h1>
-        </div>
-        <div id="menu">
-            <div class="name" th:object="${user}">
-                <h1 th:text="*{firstname} + ' ' + *{lastname}"></h1>
-            </div>
-            <ul>
-                <li><a th:href="@{/blog/articles}">home</a></li>
-                <li class="active"><a th:href="@{/blog/my}">my profile</a></li>
-                <li><a th:href="@{/logout}">logout</a></li>
-            </ul>
-        </div>
+<!-- start header -->
+<div id="header">
+    <div id="logo">
+        <h1><a href="">Victory's Blog<sup></sup></a></h1>
     </div>
+    <div id="menu">
+        <div class="name" th:object="${user}">
+            <h1 th:text="*{firstname} + ' ' + *{lastname}"></h1>
+        </div>
+        <ul>
+            <li><a th:href="@{/blog/articles}">home</a></li>
+            <li class="active"><a th:href="@{/blog/my}">my profile</a></li>
+            <li><a th:href="@{/logout}">logout</a></li>
+        </ul>
+    </div>
+</div>
 <!--</form> -->
 <!-- end header -->
 
@@ -326,7 +326,7 @@
                          placeholder="Enter your article ..."></textarea></p>
             <p><input type="submit" value="Send"></p>
         </form>
-        <p ></p>
+        <p></p>
         <br>
         <!-- start content -->
         <div id="content">
@@ -342,10 +342,13 @@
                 </div>
                 <div class="meta">
                     <p class="byline" th:text="${article.created_at}"></p>
-                    <p class="links"><a href="#" class="more">Delete article</a> <b>|</b>
-                        <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Edit</a>
-                    </p> <b>|</b>
-                    <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
+
+                    <p class="links"><a th:if="${user != null}"
+                                        th:href="@{'/blog/articles/' + ${article.id}}"
+                                        class="more">Delete article</a>
+                        <b>|</b>
+                        <a href="" class="comments">Edit</a>
+                        <b>|</b>
                         <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
                            class="comments">Comments</a>
                     </p>

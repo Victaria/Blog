@@ -326,8 +326,9 @@
                     </div>
                     <div class="meta">
                         <p class="byline" th:text="${article.created_at}"></p>
-                        <p class="links"><a href="#" class="more">Read full article</a> <b>|</b>
-                            <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}" class="comments">Comments</a>
+                        <p class="links">
+                            <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
+                               class="comments">Comments</a>
                         </p>
                     </div>
                 </div>

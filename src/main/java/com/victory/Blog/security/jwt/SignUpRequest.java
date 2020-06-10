@@ -3,9 +3,6 @@ package com.victory.Blog.security.jwt;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class SignUpRequest {
     @NotBlank
@@ -59,17 +56,13 @@ public class SignUpRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstname, lastname, email);
+        int hashnum = 9;
+        hashnum = 12 * 9 + (email.hashCode());
+        return hashnum;
     }
 
-    private byte[] generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
-        return bytes;
-    }
-
-    public String getHash(){
-        return Integer.toString(hashCode()) + Arrays.toString(generateSalt());
+    public String getHash() {
+        System.out.println(hashCode());
+        return Long.toString(hashCode()) + Math.random();
     }
 }

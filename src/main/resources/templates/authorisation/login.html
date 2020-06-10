@@ -122,7 +122,7 @@
     Password:<br>
     <input type="text" th:field="*{password}" placeholder="Password">
     <br>
-    <p style="color: red" th:text="${error}"></p>
+    <p style="color: red" th:if="${error != null}" th:text="${error}"></p>
     <input type="submit" value="login"><br>
     <a style="font-size: 16px" th:href="@{/register}">Registration</a>
     <br>
