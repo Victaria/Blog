@@ -5,6 +5,10 @@ import com.victory.Blog.base.article.ArticleRepository;
 import com.victory.Blog.base.article.ArticleRequest;
 import com.victory.Blog.base.comment.Comment;
 import com.victory.Blog.base.comment.CommentRepository;
+import com.victory.Blog.base.tag.PostTag;
+import com.victory.Blog.base.tag.PostTagRepository;
+import com.victory.Blog.base.tag.Tag;
+import com.victory.Blog.base.tag.TagRepository;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,7 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 @org.springframework.stereotype.Controller
 @RequestMapping(path = "/blog")
@@ -27,6 +33,10 @@ public class Controller {
     private ArticleRepository articleRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private TagRepository tagRepository;
+    @Autowired
+    private PostTagRepository postTagRepository;
 
     /**
      * Show all public articles
@@ -79,6 +89,8 @@ public class Controller {
             produces = MediaType.APPLICATION_JSON_VALUE)
     ModelAndView newArticle(@ModelAttribute ArticleRequest articleRequest, HttpSession session) {
 
+        List<String> tags = Arrays.asList(articleRequest.getTags().split(" "));
+
         Article article = new Article();
         article.setAuthor_id(userRepository.findByEmail((String) session.getAttribute("email")).getId());
         article.setText(articleRequest.getText());
@@ -86,9 +98,26 @@ public class Controller {
         article.setStatus("public");
         article.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
 
-        System.out.println("title: " + articleRequest.getTitle() + "text: " + articleRequest.getText());
-
         articleRepository.save(article);
+
+        for (String tag : tags) {
+            Tag existTag = tagRepository.findByName(tag);
+            PostTag pt = new PostTag();
+            if (existTag != null){
+                pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthor_id()).getId());
+                pt.setTagId(existTag.getId());
+            } else {
+                Tag tagObj = new Tag();
+                tagObj.setName(tag);
+                tagRepository.save(tagObj);
+
+                pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthor_id()).getId());
+                pt.setTagId(tagRepository.findByName(tag).getId());
+            }
+            postTagRepository.save(pt);
+        }
+
+        System.out.println("title: " + articleRequest.getTitle() + "text: " + articleRequest.getText());
 
         return new ModelAndView("redirect:/blog/my");
     }
@@ -143,8 +172,6 @@ public class Controller {
         int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
         int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
 
-        System.out.println(userId + "  " + postAuthorId);
-
         if (userId == postAuthorId) {
             articleRepository.deleteById(post_id);
         } else {
@@ -153,7 +180,6 @@ public class Controller {
 
         return new ModelAndView("redirect:/blog/my");
     }
-
 
     /**
      * Delete comment
@@ -175,5 +201,39 @@ public class Controller {
         }
 
         return new ModelAndView("redirect:/blog/articles/" + post_id + "/comments");
+    }
+
+    /**
+     * Edit article
+     */
+    @RequestMapping(value = "/articles/{post_id}/edit", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelAndView editArticle(@PathVariable int post_id, HttpSession session) {
+        int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
+        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
+
+        if (userId == postAuthorId) {
+            ModelAndView mav = new ModelAndView("afterAuth/profile");
+            mav.addObject("old_article", articleRepository.getOne(post_id));
+
+            mav.addObject("articles", articleRepository.findByAuthorId(postAuthorId));
+            mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
+            mav.addObject("templates", articleRepository.findDraftByAuthorId(postAuthorId));
+
+            return mav;
+        } else {
+            System.out.println("no rights");
+            return new ModelAndView("redirect:/blog/my");
+        }
+    }
+
+    @Transactional
+    @RequestMapping(value = "/articles/{post_id}/edit", method = RequestMethod.POST)
+    public @ResponseBody
+    ModelAndView putArticle(@PathVariable int post_id, @ModelAttribute Article article, HttpSession session) {
+       article.setUpdated_at(new Date(Calendar.getInstance().getTime().getTime()));
+       articleRepository.save(article);
+
+        return new ModelAndView("redirect:/blog/my");
     }
 }

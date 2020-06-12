@@ -316,7 +316,7 @@
                 </option>
             </select>
         </div>
-        <form th:action="@{/blog/articles}" th:object="${articleRequest}" method="post">
+        <form th:if="${old_article == null}" th:action="@{/blog/articles}" th:object="${articleRequest}" method="post">
             <p><textarea th:field="*{title}" style="resize: none; width: 260px; height: 20px"
                          placeholder="Enter your title ..."></textarea>
             </p>
@@ -326,6 +326,19 @@
                          placeholder="Enter your article ..."></textarea></p>
             <p><input type="submit" value="Send"></p>
         </form>
+
+        <form th:if="${old_article != null}" th:action="@{'/blog/articles/' + ${old_article.id} + '/edit'}"
+              th:object="${old_article}" method="post">
+            <p><textarea th:text="*{title}" th:field="*{title}" style="resize: none; width: 260px; height: 20px"
+                         placeholder="Enter your title ..."></textarea>
+            </p>
+          <!--  <p><textarea th:text="*{tags}" th:field="*{tags}" style="resize: none; width: 450px; height: 20px"
+                         placeholder="Enter tags ..."></textarea></p> -->
+            <p><textarea th:text="*{text}" th:field="*{text}" style="resize: none; width: 600px; height: 80px"
+                         placeholder="Enter your article ..."></textarea></p>
+            <p><input type="submit" value="PUT"></p>
+        </form>
+
         <p></p>
         <br>
         <!-- start content -->
@@ -347,7 +360,7 @@
                                         th:href="@{'/blog/articles/' + ${article.id}}"
                                         class="more">Delete article</a>
                         <b>|</b>
-                        <a href="" class="comments">Edit</a>
+                        <a th:href="@{'/blog/articles/' + ${article.id} + '/edit'}" class="comments">Edit</a>
                         <b>|</b>
                         <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
                            class="comments">Comments</a>

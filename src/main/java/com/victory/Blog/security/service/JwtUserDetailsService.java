@@ -49,4 +49,10 @@ public class JwtUserDetailsService implements UserDetailsService {
         return userRepository.save(newUser);
     }
 
+    public void update(User user) {
+        user.setPassword(bcryptEncoder.encode(user.getPassword()));
+        user.setConfirmed(true);
+        userRepository.updateUser(user.getPassword(), user.getId());
+    }
+
 }

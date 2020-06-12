@@ -54,15 +54,26 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    @Override
-    public int hashCode() {
-        int hashnum = 9;
-        hashnum = 12 * 9 + (email.hashCode());
-        return hashnum;
-    }
+    public static String generateHash(int capacity) {
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
 
-    public String getHash() {
-        System.out.println(hashCode());
-        return Long.toString(hashCode()) + Math.random();
+        StringBuilder sb = new StringBuilder(capacity);
+
+        for (int i = 0; i < 10; i++) {
+
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                    = (int) (AlphaNumericString.length()
+                    * Math.random());
+
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                    .charAt(index));
+        }
+
+        return sb.toString();
     }
 }

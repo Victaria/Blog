@@ -15,4 +15,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     @Query("SELECT t FROM Article t WHERE t.author_id = ?1 AND t.status = 'draft' ")
     List<Article> findDraftByAuthorId(Integer author_id);
+
+    @Query("SELECT t FROM Article t WHERE t.author_id = ?2 AND t.title = ?1 ")
+    Article findByTitleAndAuthorId(String title, Integer author_id);
+
 }
