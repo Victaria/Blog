@@ -11,6 +11,11 @@ import com.victory.Blog.base.tag.Tag;
 import com.victory.Blog.base.tag.TagRepository;
 import com.victory.Blog.base.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.annotation.Secured;
@@ -39,9 +44,11 @@ public class Controller {
     /**
      * Show all public articles
      */
-    @GetMapping(path = "/articles")
+    @RequestMapping(path = "/articles", method = RequestMethod.GET)
     public @ResponseBody
-    ModelAndView getAllArticles(HttpSession session) {
+    ModelAndView getAllArticles(HttpSession session,
+                                @PageableDefault(sort = {"id"},
+                                        direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
 
         ModelAndView mav = new ModelAndView("articles/main");
 
@@ -52,7 +59,9 @@ public class Controller {
             mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
         }
 
-        mav.addObject("articles", articleRepository.findPublicArticles());
+        Page<Article> page = articleRepository.findPublicArticles(pageable);
+
+        mav.addObject("articles", page);
 
         return mav;
     }
@@ -62,10 +71,12 @@ public class Controller {
      */
     @GetMapping(path = "/articles/{post_id}/comments")
     public @ResponseBody
-    ModelAndView getCommentsByPostId(@PathVariable int post_id, HttpSession session) {
+    ModelAndView getCommentsByPostId(@PathVariable int post_id, HttpSession session,
+                                     @PageableDefault(sort = {"id"},
+                                             direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
 
         ModelAndView mav = new ModelAndView("articles/comments");
-        mav.addObject("comments", commentRepository.findByPostId(post_id));
+        mav.addObject("comments", commentRepository.findByPostId(post_id, pageable));
 
         if (session.getAttribute("email") != null) {
             mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
@@ -125,14 +136,16 @@ public class Controller {
      */
     @GetMapping("/my")
     public @ResponseBody
-    ModelAndView showUserProfile(@NonNull HttpSession session) {
+    ModelAndView showUserProfile(@NonNull HttpSession session, @PageableDefault(sort = {"id"},
+            direction = Sort.Direction.DESC, value = 5)
+            Pageable pageable) {
 
         System.out.println(session.getAttribute("email"));
 
         if (session.getAttribute("email") != null) {
             ModelAndView mav = new ModelAndView("afterAuth/profile", "articleRequest", new ArticleRequest());
 
-            mav.addObject("articles", articleRepository.findByAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId()));
+            mav.addObject("articles", articleRepository.findByAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId(), pageable));
             mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
             mav.addObject("templates", articleRepository.findDraftByAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId()));
 
@@ -206,7 +219,7 @@ public class Controller {
      */
     @RequestMapping(value = "/articles/{post_id}/edit", method = RequestMethod.GET)
     public @ResponseBody
-    ModelAndView editArticle(@PathVariable int post_id, HttpSession session) {
+    ModelAndView editArticle(@PathVariable int post_id, HttpSession session, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
         int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
         int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
 
@@ -214,7 +227,7 @@ public class Controller {
             ModelAndView mav = new ModelAndView("afterAuth/profile");
             mav.addObject("old_article", articleRepository.getOne(post_id));
 
-            mav.addObject("articles", articleRepository.findByAuthorId(postAuthorId));
+            mav.addObject("articles", articleRepository.findByAuthorId(postAuthorId, pageable));
             mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
             mav.addObject("templates", articleRepository.findDraftByAuthorId(postAuthorId));
 
@@ -236,32 +249,78 @@ public class Controller {
         return new ModelAndView("redirect:/blog/my");
     }
 
-    @GetMapping(value = "/articles?tags={tags}")
+    @RequestMapping(value = "/search/articles", method = RequestMethod.GET)
     public @ResponseBody
-    ModelAndView findByTags(@PathVariable String tags, HttpSession session){
+    ModelAndView findByTags(@RequestParam("tags") String tags, HttpSession session,
+                            @PageableDefault(sort = {"id"},
+                                    direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
         List<String> tagList = Arrays.asList(tags.split(","));
-        Set<PostTag> articleSet = new LinkedHashSet<>();
+        Set<PostTag> postTagSet = new LinkedHashSet<>();
+        Set<Article> articleSet = new LinkedHashSet<>();
         Tag tag;
-        for (String tagName : tagList){
+        for (String tagName : tagList) {
+
             tag = tagRepository.findByName(tagName);
             if (tag != null) {
-                articleSet.addAll(postTagRepository.findAllByTagId(tag.getId()));
+                postTagSet.addAll(postTagRepository.findAllByTagId(tag.getId()));
             }
-            if (!articleSet.isEmpty()){
+            System.out.println(postTagSet.toString());
+            if (!postTagSet.isEmpty()) {
                 ModelAndView mav = new ModelAndView("articles/main");
 
+                for (PostTag postTag : postTagSet) {
+                    articleSet.add(articleRepository.findById(postTag.getPostId()).get());
+                }
+
+                Page<Article> articlePage = new PageImpl<Article>(new ArrayList<>(articleSet), pageable, articleSet.size());
+
+                System.out.println(session.getAttribute("email"));
+
                 if (session.getAttribute("email") != null) {
+                    System.out.println("In after auth ****** *******");
 
                     mav = new ModelAndView("afterAuth/main");
 
                     mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
                 }
 
-                mav.addObject("articles", articleSet);
+                mav.addObject("articles", articlePage);
+
+                mav.getModelMap().addAttribute(pageable);
 
                 return mav;
             }
         }
         return new ModelAndView("info/information", "info", "No articles with such tags.");
+    }
+
+    @RequestMapping(value = "/tags-cloud", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelAndView getPostsCount(@RequestParam("tag") String tagName, HttpSession session, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("articles/main");
+
+        if (session.getAttribute("email") != null) {
+
+            mav = new ModelAndView("afterAuth/main");
+
+            mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
+        }
+
+        mav.addObject("articles", articleRepository.findPublicArticles(pageable));
+
+        Tag tag = tagRepository.findByName(tagName);
+        Set<PostTag> postTagSet = new LinkedHashSet<>();
+
+        if (tag != null) {
+            postTagSet.addAll(postTagRepository.findAllByTagId(tag.getId()));
+        }
+        if (!postTagSet.isEmpty()) {
+            int count = postTagSet.size();
+
+            mav.addObject("count", "Count of articles with tag '" + tagName + "'" + " is " + count);
+        } else {
+            mav.addObject("count", "There is no posts with tag '" + tagName + "'");
+        }
+        return mav;
     }
 }

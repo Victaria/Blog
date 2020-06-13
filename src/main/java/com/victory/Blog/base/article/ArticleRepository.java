@@ -1,5 +1,7 @@
 package com.victory.Blog.base.article;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,10 +13,10 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     @Query("SELECT t FROM Article t WHERE t.author_id = ?1 ")
-    List<Article> findByAuthorId(Integer author_id);
+    Page<Article> findByAuthorId(Integer author_id, Pageable pageable);
 
     @Query("SELECT t FROM Article t WHERE t.status = 'public' ")
-    List<Article> findPublicArticles();
+    Page<Article> findPublicArticles(Pageable pageable);
 
     @Query("SELECT t FROM Article t WHERE t.author_id = ?1 AND t.status = 'draft' ")
     List<Article> findDraftByAuthorId(Integer author_id);
