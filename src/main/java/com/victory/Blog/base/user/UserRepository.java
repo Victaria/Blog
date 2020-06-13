@@ -10,6 +10,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("update User u set u.password = ?1 where u.id = ?2") //set confirmed = true
+    @Query("update User u set u.password = ?1 where u.id = ?2")
+        //set confirmed = true
     void updateUser(String password, int id);
 }

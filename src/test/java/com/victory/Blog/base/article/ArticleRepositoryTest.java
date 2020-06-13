@@ -47,4 +47,5 @@ class ArticleRepositoryTest {
             Assert.assertEquals(testArticle.getStatus(), article.getStatus());
         }
     }
+
 }

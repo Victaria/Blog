@@ -118,7 +118,12 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.googlecode.page-component</groupId>
+            <artifactId>page-component</artifactId>
+            <version>1.4.6</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

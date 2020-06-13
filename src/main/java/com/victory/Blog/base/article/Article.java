@@ -88,4 +88,15 @@ public class Article {
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
+
+    public Article() {
+    }
+
+    public Article(String title, String text, String status, int author_id, Date created_at) {
+        this.title = title;
+        this.text = text;
+        this.status = status;
+        this.created_at = created_at;
+        this.author_id = author_id;
+    }
 }

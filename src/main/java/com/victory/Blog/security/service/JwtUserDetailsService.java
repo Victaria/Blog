@@ -2,6 +2,7 @@ package com.victory.Blog.security.service;
 
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserRepository;
+import com.victory.Blog.security.jwt.SignUpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,7 +46,17 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setLastname(user.getLastname());
         newUser.setConfirmed(false);
         newUser.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
-        System.out.println("HERE **********************");
+        return userRepository.save(newUser);
+    }
+
+    public User save(SignUpRequest user) {
+        User newUser = new User();
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+        newUser.setFirstname(user.getFirstname());
+        newUser.setLastname(user.getLastname());
+        newUser.setConfirmed(false);
+        newUser.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
         return userRepository.save(newUser);
     }
 

@@ -20,7 +20,7 @@ public class JwtTokenUtil implements Serializable {
     public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60 * 1000;
 
     // Secret to sign JWT
-     @Value("${jwt.secret}")
+    @Value("${jwt.secret}")
     private String SIGNING_KEY;
 
     private static final String AUTHORITIES_KEY = "scopes";

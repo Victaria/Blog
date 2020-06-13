@@ -1,11 +1,9 @@
 package com.victory.Blog.controller;
 
-import com.victory.Blog.base.article.ArticleRepository;
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserEmail;
 import com.victory.Blog.base.user.UserRepository;
 import com.victory.Blog.security.auth.EmailService;
-import com.victory.Blog.security.auth.account.access.EmailLinkRepository;
 import com.victory.Blog.security.jwt.JwtRequest;
 import com.victory.Blog.security.jwt.JwtTokenUtil;
 import com.victory.Blog.security.jwt.SignUpRequest;
@@ -39,12 +37,6 @@ public class JwtAuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ArticleRepository articleRepository;
-
-    @Autowired
-    private EmailLinkRepository emailLinkRepository;
 
     Jedis jedis = new Jedis("127.0.0.1");
 
@@ -112,20 +104,17 @@ public class JwtAuthenticationController {
     ModelAndView saveUser(@ModelAttribute SignUpRequest signUpRequest) throws Exception {
 
         if (userRepository.findByEmail(signUpRequest.getEmail()) == null) {
-            User user = new User();
-            user.setFirstname(signUpRequest.getFirstname());
-            user.setLastname(signUpRequest.getLastname());
-            user.setEmail(signUpRequest.getEmail());
-            user.setPassword(signUpRequest.getPassword());
 
-            userDetailsService.save(user);
+            userDetailsService.save(signUpRequest);
+
+            User user = userRepository.findByEmail(signUpRequest.getEmail());
 
             final String token = SignUpRequest.generateHash(10);
 
             jedis.set(token, userRepository.findByEmail(user.getEmail()).getId().toString());
             jedis.expire(token, 86400);
 
-            mailer.sendMail(signUpRequest.getEmail(), "Dear " + user.getFirstname()
+            mailer.sendMail(user.getEmail(), "Dear " + user.getFirstname()
                     + ", please, confirm your email. This link is valid for 24 hours." + '\n'
                     + "Follow this link: " + "http://localhost:8080/auth/confirm/" + token);
 
