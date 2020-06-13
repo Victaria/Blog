@@ -20,9 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.sql.Date;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 @org.springframework.stereotype.Controller
 @RequestMapping(path = "/blog")
@@ -103,7 +101,7 @@ public class Controller {
         for (String tag : tags) {
             Tag existTag = tagRepository.findByName(tag);
             PostTag pt = new PostTag();
-            if (existTag != null){
+            if (existTag != null) {
                 pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthor_id()).getId());
                 pt.setTagId(existTag.getId());
             } else {
@@ -231,9 +229,39 @@ public class Controller {
     @RequestMapping(value = "/articles/{post_id}/edit", method = RequestMethod.POST)
     public @ResponseBody
     ModelAndView putArticle(@PathVariable int post_id, @ModelAttribute Article article, HttpSession session) {
-       article.setUpdated_at(new Date(Calendar.getInstance().getTime().getTime()));
-       articleRepository.save(article);
+        article.setUpdated_at(new Date(Calendar.getInstance().getTime().getTime()));
+        //System.out.println(article.getUpdated_at() + "  ****  " + article.getTitle() + "  ****  " + article.getText() + "  ****  " + post_id);
+        articleRepository.updateArticle(article.getUpdated_at(), article.getTitle(), article.getText(), post_id);
 
         return new ModelAndView("redirect:/blog/my");
+    }
+
+    @GetMapping(value = "/articles?tags={tags}")
+    public @ResponseBody
+    ModelAndView findByTags(@PathVariable String tags, HttpSession session){
+        List<String> tagList = Arrays.asList(tags.split(","));
+        Set<PostTag> articleSet = new LinkedHashSet<>();
+        Tag tag;
+        for (String tagName : tagList){
+            tag = tagRepository.findByName(tagName);
+            if (tag != null) {
+                articleSet.addAll(postTagRepository.findAllByTagId(tag.getId()));
+            }
+            if (!articleSet.isEmpty()){
+                ModelAndView mav = new ModelAndView("articles/main");
+
+                if (session.getAttribute("email") != null) {
+
+                    mav = new ModelAndView("afterAuth/main");
+
+                    mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
+                }
+
+                mav.addObject("articles", articleSet);
+
+                return mav;
+            }
+        }
+        return new ModelAndView("info/information", "info", "No articles with such tags.");
     }
 }

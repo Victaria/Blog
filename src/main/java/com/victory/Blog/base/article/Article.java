@@ -88,12 +88,4 @@ public class Article {
     public void setUpdated_at(Date updated_at) {
         this.updated_at = updated_at;
     }
-
-   /* public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }*/
 }
