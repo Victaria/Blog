@@ -45,8 +45,7 @@ public class TagService {
     }
 
     public Tag getTag(String tagName) {
-       return tagRepository.findByName(tagName);
+        return tagRepository.findByName(tagName);
     }
-
 
 }

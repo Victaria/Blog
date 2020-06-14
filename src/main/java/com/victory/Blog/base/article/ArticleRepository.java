@@ -27,6 +27,11 @@ public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaS
     @Query("update Article a set a.updatedAt = ?1 , a.status = 'public' where a.id = ?2")
     void updateByIdStatusToPublic(Date date, Integer id);
 
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("update Article a set a.updatedAt = ?1 , a.status = 'draft' where a.id = ?2")
+    void updateByIdStatusToDraft(Date date, Integer id);
+
     @Query("SELECT t FROM Article t WHERE t.authorId = ?2 AND t.title = ?1 ")
     Article findByTitleAndAuthorId(String title, Integer author_id);
 

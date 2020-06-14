@@ -43,7 +43,7 @@ public class CommentService {
 
     public HttpStatus deleteComment(int post_id, int id, HttpSession session) {
         int userId = userService.getByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleService.getById(post_id).get().getAuthorId();
+        int postAuthorId = articleService.getById(post_id).getAuthorId();
         int commentAuthorId = commentRepository.getOne(id).getAuthorId();
 
         System.out.println(userId + "  " + postAuthorId + "  " + commentAuthorId);

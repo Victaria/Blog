@@ -20,7 +20,7 @@ import java.util.*;
 
 @Transactional
 @Service
-public class ArticleService{
+public class ArticleService {
 
     @Autowired
     ArticleRepository articleRepository;
@@ -34,12 +34,12 @@ public class ArticleService{
     @Autowired
     PostTagService postTagService;
 
-    public Optional<Article> getById(int id){
-        return articleRepository.findById(id);
+    public Article getById(int id) {
+        return articleRepository.findById(id).get();
     }
 
-    public Article getArticleByTitleAndAuthorId(String title, int author_id){
-       return articleRepository.findByTitleAndAuthorId(title, author_id);
+    public Article getArticleByTitleAndAuthorId(String title, int author_id) {
+        return articleRepository.findByTitleAndAuthorId(title, author_id);
     }
 
     public Article createArticle(ArticleRequest articleRequest, HttpSession session) {
@@ -50,14 +50,14 @@ public class ArticleService{
         article.setStatus("public");
         article.setCreatedAt(new Date(Calendar.getInstance().getTime().getTime()));
 
-       return articleRepository.save(article);
+        return articleRepository.save(article);
     }
 
-    public Page<Article> getByAuthorId(Integer author_id, Pageable pageable){
+    public Page<Article> getByAuthorId(Integer author_id, Pageable pageable) {
         return articleRepository.findByAuthorId(author_id, pageable);
     }
 
-    public List<Article> getDraftByAuthorId(Integer author_id){
+    public List<Article> getDraftByAuthorId(Integer author_id) {
         return articleRepository.findDraftByAuthorId(author_id);
     }
 
@@ -83,7 +83,7 @@ public class ArticleService{
     }
 
     public Page<Article> getPublicArticles(Pageable pageable) {
-       return articleRepository.findPublicArticles(pageable);
+        return articleRepository.findPublicArticles(pageable);
     }
 
     public Page<Article> findArticleByTags(List<String> tags, Pageable pageable) {
@@ -108,7 +108,7 @@ public class ArticleService{
     }
 
     public Page<Article> filter(int skip, int limit, int author_id, String sortField, String order,
-                                 Pageable pageable){
+                                Pageable pageable) {
 
         Sort sort = Sort.by(sortField).ascending();
 
@@ -121,4 +121,11 @@ public class ArticleService{
         return new PageImpl<Article>(articles, pageable, articles.size());
     }
 
+    public void updateStatusToPublic(Integer id) {
+        articleRepository.updateByIdStatusToPublic(new Date(Calendar.getInstance().getTime().getTime()), id);
+    }
+
+    public void updateStatusToDraft(Integer id) {
+        articleRepository.updateByIdStatusToDraft(new Date(Calendar.getInstance().getTime().getTime()), id);
+    }
 }

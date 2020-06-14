@@ -11,11 +11,11 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public User getByEmail(String email){
+    public User getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public void updateUser(){
-
+    public User getById(int id) {
+        return userRepository.findById(id).get();
     }
 }

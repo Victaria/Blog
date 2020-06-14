@@ -29,7 +29,7 @@ public class PostTagService {
         return postTagRepository.findAllByTagId(tag_id);
     }
 
-    public int countArticlesWithTag(String tagName){
+    public int countArticlesWithTag(String tagName) {
         Tag tag = tagService.getTag(tagName);
         Set<PostTag> postTagSet = new LinkedHashSet<>();
 

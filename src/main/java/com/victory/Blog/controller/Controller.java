@@ -104,18 +104,16 @@ public class Controller {
      */
     @GetMapping("/my")
     public @ResponseBody
-    ModelAndView showUserProfile(@NonNull HttpSession session, @PageableDefault(sort = {"id"},
-            direction = Sort.Direction.DESC, value = 5)
-            Pageable pageable) {
-
-        System.out.println(session.getAttribute("email"));
+    ModelAndView showUserProfile(@NonNull HttpSession session,
+                                 @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, value = 5)
+                                         Pageable pageable) {
 
         if (session.getAttribute("email") != null) {
             ModelAndView mav = new ModelAndView("afterAuth/profile", "articleRequest", new ArticleRequest());
 
             mav.addObject("articles", articleService.getByAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId(), pageable));
             mav.addObject("user", userService.getByEmail((String) session.getAttribute("email")));
-            mav.addObject("templates", articleService.getDraftByAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId()));
+           // mav.addObject("templates", articleService.getDraftByAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId()));
 
             return mav;
         } else {
@@ -173,11 +171,11 @@ public class Controller {
                                      Pageable pageable) {
 
         int userId = userService.getByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleService.getById(post_id).get().getAuthorId();
+        int postAuthorId = articleService.getById(post_id).getAuthorId();
 
         if (userId == postAuthorId) {
             ModelAndView mav = new ModelAndView("afterAuth/profile");
-            mav.addObject("old_article", articleService.getById(post_id).get());
+            mav.addObject("old_article", articleService.getById(post_id));
 
             mav.addObject("articles", articleService.getByAuthorId(postAuthorId, pageable));
             mav.addObject("user", userService.getByEmail((String) session.getAttribute("email")));
@@ -196,6 +194,22 @@ public class Controller {
     ModelAndView putArticle(@PathVariable int post_id, @ModelAttribute Article article) {
 
         articleService.updateArticle(post_id, article);
+
+        return new ModelAndView("redirect:/blog/my");
+    }
+
+    @Transactional
+    @RequestMapping(value = "/articles/{post_id}/change_status", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelAndView changeStatus(@PathVariable int post_id) {
+
+        Article article = articleService.getById(post_id);
+
+        if (article.getStatus().equals("draft")){
+            articleService.updateStatusToPublic(post_id);
+        } else {
+            articleService.updateStatusToDraft(post_id);
+        }
 
         return new ModelAndView("redirect:/blog/my");
     }
@@ -302,6 +316,7 @@ public class Controller {
         mav.addObject("comments", commentService.filter(skip, limit, author_id, sortField, order, pageable));
 
         return mav;
-
     }
+
+
 }

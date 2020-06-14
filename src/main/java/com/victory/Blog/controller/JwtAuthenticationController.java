@@ -2,7 +2,7 @@ package com.victory.Blog.controller;
 
 import com.victory.Blog.base.user.User;
 import com.victory.Blog.base.user.UserEmail;
-import com.victory.Blog.base.user.UserRepository;
+import com.victory.Blog.base.user.UserService;
 import com.victory.Blog.security.auth.EmailService;
 import com.victory.Blog.security.jwt.JwtRequest;
 import com.victory.Blog.security.jwt.JwtTokenUtil;
@@ -36,7 +36,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     Jedis jedis = new Jedis("127.0.0.1");
 
@@ -61,7 +61,8 @@ public class JwtAuthenticationController {
 
         if (authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword()) != null) {
             Authentication auth = authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
-            if (userRepository.findByEmail(authenticationRequest.getEmail()).getConfirmed()) {
+
+            if (userService.getByEmail(authenticationRequest.getEmail()).getConfirmed()) {
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
                 final String token = jwtTokenUtil.generateToken(auth);
@@ -70,11 +71,13 @@ public class JwtAuthenticationController {
 
                 return new ModelAndView("redirect:/blog/my");
             } else {
+
                 ModelAndView mav = new ModelAndView("authorisation/login", "authenticationRequest", new JwtRequest());
                 mav.addObject("error", "You did not confirm e-mail.");
                 return mav;
             }
         } else {
+
             ModelAndView mav = new ModelAndView("authorisation/login", "authenticationRequest", new JwtRequest());
             mav.addObject("error", "E-mail or Password are incorrect.");
             return mav;
@@ -103,20 +106,18 @@ public class JwtAuthenticationController {
     public @ResponseBody
     ModelAndView saveUser(@ModelAttribute SignUpRequest signUpRequest) throws Exception {
 
-        if (userRepository.findByEmail(signUpRequest.getEmail()) == null) {
+        if (userService.getByEmail(signUpRequest.getEmail()) == null) {
 
             userDetailsService.save(signUpRequest);
 
-            User user = userRepository.findByEmail(signUpRequest.getEmail());
+            User user = userService.getByEmail(signUpRequest.getEmail());
 
             final String token = SignUpRequest.generateHash(10);
 
-            jedis.set(token, userRepository.findByEmail(user.getEmail()).getId().toString());
+            jedis.set(token, userService.getByEmail(user.getEmail()).getId().toString());
             jedis.expire(token, 86400);
 
-            mailer.sendMail(user.getEmail(), "Dear " + user.getFirstname()
-                    + ", please, confirm your email. This link is valid for 24 hours." + '\n'
-                    + "Follow this link: " + "http://localhost:8080/auth/confirm/" + token);
+            mailer.mailForRegistration(user, token);
 
             return new ModelAndView("info/sentToEmail", "text",
                     "Link for registration confirmation was sent to your email");
@@ -134,7 +135,7 @@ public class JwtAuthenticationController {
         if (jedis.exists(hash)) {
             System.out.println(jedis.get(hash));
 
-            User user = userRepository.findById(Integer.parseInt(jedis.get(hash))).get();
+            User user = userService.getById(Integer.parseInt(jedis.get(hash)));
             user.setConfirmed(true);
             jedis.del(hash);
             return new ModelAndView("info/information", "info", "You've successfully confirmed your email. You can login now.");//successfully confirmed form
@@ -179,19 +180,14 @@ public class JwtAuthenticationController {
     ModelAndView sendToMailPassword(@ModelAttribute UserEmail user_email) {
         String email = user_email.getEmail();
         if (!email.isEmpty()) {
-            User user = userRepository.findByEmail(email);
+            User user = userService.getByEmail(email);
             if (user != null) {
                 final String token = SignUpRequest.generateHash(12);
 
                 jedis.set(token, user.getId().toString());
                 jedis.expire(token, 172800);
 
-                System.out.println(jedis.get(token));
-
-                mailer.sendMail(user.getEmail(), "Dear " + user.getFirstname()
-                        + ", here is your link for password changing." + '\n'
-                        + "Follow this link: " + "http://localhost:8080/auth/reset/" + token + '\n'
-                        + "If it was not you, please, ignore this message.");
+                mailer.mailForReset(user, token);
 
                 return new ModelAndView("info/sentToEmail", "text",
                         "Link for password changing was sent to your email.");
@@ -211,7 +207,7 @@ public class JwtAuthenticationController {
     public @ResponseBody
     ModelAndView sendToMailPassword(@PathVariable String hash, HttpSession httpSession) {
         if (jedis.exists(hash)) {
-            User user = userRepository.findById(Integer.parseInt(jedis.get(hash))).get();
+            User user = userService.getById(Integer.parseInt(jedis.get(hash)));
 
             httpSession.setAttribute("email", user.getEmail());
             return new ModelAndView("recovery/enterPassword", "jwtRequest", new JwtRequest());
@@ -225,7 +221,7 @@ public class JwtAuthenticationController {
     public @ResponseBody
     ModelAndView saveNewPassword(@ModelAttribute JwtRequest jwtRequest, HttpSession httpSession) {
         if (!jwtRequest.getPassword().isEmpty()) {
-            User user = userRepository.findByEmail(httpSession.getAttribute("email").toString());
+            User user = userService.getByEmail(httpSession.getAttribute("email").toString());
             user.setPassword(jwtRequest.getPassword());
 
             userDetailsService.update(user);

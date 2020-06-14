@@ -38,17 +38,6 @@ public class JwtUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-    public User save(User user) {
-        User newUser = new User();
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-        newUser.setFirstname(user.getFirstname());
-        newUser.setLastname(user.getLastname());
-        newUser.setConfirmed(false);
-        newUser.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
-        return userRepository.save(newUser);
-    }
-
     public User save(SignUpRequest user) {
         User newUser = new User();
         newUser.setEmail(user.getEmail());
