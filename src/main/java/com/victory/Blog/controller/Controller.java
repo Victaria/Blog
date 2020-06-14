@@ -257,7 +257,7 @@ public class Controller {
     @RequestMapping(value = "/search/articles", method = RequestMethod.GET)
     public @ResponseBody
     ModelAndView findByTags(@RequestParam("tags") String tags, HttpSession session,
-                            @PageableDefault(sort = {"id"},
+                     @PageableDefault(sort = {"id"},
                                     direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
         List<String> tagList = Arrays.asList(tags.split(","));
         Set<PostTag> postTagSet = new LinkedHashSet<>();
@@ -271,6 +271,7 @@ public class Controller {
             }
             System.out.println(postTagSet.toString());
             if (!postTagSet.isEmpty()) {
+
                 ModelAndView mav = new ModelAndView("articles/main");
 
                 for (PostTag postTag : postTagSet) {
@@ -292,6 +293,7 @@ public class Controller {
                 mav.addObject("articles", articlePage);
 
                 mav.getModelMap().addAttribute(pageable);
+
 
                 return mav;
             }
