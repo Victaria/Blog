@@ -340,12 +340,12 @@
         <div id="content">
             <div class="post" th:each="article : ${articles.content}">
                 <h1 class="title" th:text="${article.title}"></h1>
-                <h5 th:text="${article.author_id}"></h5>
+                <h5 th:text="${article.authorId}"></h5>
                 <div class="entry">
                     <p th:text="${article.text}"></p>
                 </div>
                 <div class="meta">
-                    <p class="byline" th:text="${article.created_at}"></p>
+                    <p class="byline" th:text="${article.createdAt}"></p>
                     <p class="links">
                         <a th:href="@{'/blog/articles/' + ${article.id} + '/comments'}"
                            class="comments">Comments</a>

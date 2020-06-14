@@ -1,4 +1,4 @@
-package com.victory.Blog.base.article;
+package com.victory.Blog.base.comment;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

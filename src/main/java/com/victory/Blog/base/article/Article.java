@@ -1,7 +1,5 @@
 package com.victory.Blog.base.article;
 
-import com.victory.Blog.base.user.User;
-
 import javax.persistence.*;
 import java.sql.Date;
 
@@ -25,13 +23,13 @@ public class Article {
     @Column(name = "author_id")
    /* @ManyToOne
     @JoinColumn(name = "author_id")*/
-    private Integer author_id;
+    private Integer authorId;
 
     @Column(name = "created_at")
-    private Date created_at;
+    private Date createdAt;
 
     @Column(name = "updated_at")
-    private Date updated_at;
+    private Date updatedAt;
 
     public Integer getId() {
         return id;
@@ -65,28 +63,28 @@ public class Article {
         this.status = status;
     }
 
-    public Integer getAuthor_id() {
-        return author_id;
+    public Integer getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthor_id(Integer author_id) {
-        this.author_id = author_id;
+    public void setAuthorId(Integer author_id) {
+        this.authorId = author_id;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date created_at) {
+        this.createdAt = created_at;
     }
 
-    public Date getUpdated_at() {
-        return updated_at;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Date updated_at) {
+        this.updatedAt = updated_at;
     }
 
     public Article() {
@@ -96,7 +94,7 @@ public class Article {
         this.title = title;
         this.text = text;
         this.status = status;
-        this.created_at = created_at;
-        this.author_id = author_id;
+        this.createdAt = created_at;
+        this.authorId = author_id;
     }
 }

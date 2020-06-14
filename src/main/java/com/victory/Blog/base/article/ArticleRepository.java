@@ -13,26 +13,26 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
 
-    @Query("SELECT t FROM Article t WHERE t.author_id = ?1 ")
+    @Query("SELECT t FROM Article t WHERE t.authorId = ?1 ")
     Page<Article> findByAuthorId(Integer author_id, Pageable pageable);
 
     @Query("SELECT t FROM Article t WHERE t.status = 'public' ")
     Page<Article> findPublicArticles(Pageable pageable);
 
-    @Query("SELECT t FROM Article t WHERE t.author_id = ?1 AND t.status = 'draft' ")
+    @Query("SELECT t FROM Article t WHERE t.authorId = ?1 AND t.status = 'draft' ")
     List<Article> findDraftByAuthorId(Integer author_id);
 
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("update Article a set a.updated_at = ?1 , a.status = 'public' where a.id = ?2")
+    @Query("update Article a set a.updatedAt = ?1 , a.status = 'public' where a.id = ?2")
     void updateByIdStatusToPublic(Date date, Integer id);
 
-    @Query("SELECT t FROM Article t WHERE t.author_id = ?2 AND t.title = ?1 ")
+    @Query("SELECT t FROM Article t WHERE t.authorId = ?2 AND t.title = ?1 ")
     Article findByTitleAndAuthorId(String title, Integer author_id);
 
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("update Article a set a.updated_at = ?1 , a.title = ?2 , a.text = ?3 where a.id = ?4")
+    @Query("update Article a set a.updatedAt = ?1 , a.title = ?2 , a.text = ?3 where a.id = ?4")
         //set confirmed = true
     void updateArticle(Date date, String title, String text, int id);
 

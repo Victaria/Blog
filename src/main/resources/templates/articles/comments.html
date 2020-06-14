@@ -343,14 +343,14 @@
         <div id="content">
             <p th:if="${#lists.isEmpty(comments)}">there is no comments yet</p>
             <div class="post" th:each="comment : ${comments.content}">
-                <h1 class="title" th:text="${comment.author_id}"></h1>
-                <h5 th:text="${comment.created_at}"></h5>
+                <h1 class="title" th:text="${comment.authorId}"></h1>
+                <h5 th:text="${comment.createdAt}"></h5>
                 <div class="entry">
                     <p th:text="${comment.message}"></p>
                 </div>
                 <div class="meta">
                     <p class="links"><a th:if="${user != null}"
-                                        th:href="@{'/blog/articles/' +${comment.post_id} + '/comments/' + ${comment.id}}"
+                                        th:href="@{'/blog/articles/' +${comment.postId} + '/comments/' + ${comment.id}}"
                                         class="more">Delete comment</a></p>
                 </div>
             </div>

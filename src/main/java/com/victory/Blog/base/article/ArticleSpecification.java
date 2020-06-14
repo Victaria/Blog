@@ -22,7 +22,7 @@ public class ArticleSpecification {
         return new Specification<Article>() {
             @Override
             public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get("author_id"), id);
+                return criteriaBuilder.equal(root.get("authorId"), id);
             }
         };
     }

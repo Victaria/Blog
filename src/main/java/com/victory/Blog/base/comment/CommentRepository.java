@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer>, JpaSpecificationExecutor<Comment> {
 
-    @Query("SELECT t FROM Comment t WHERE t.post_id = ?1 ")
+    @Query("SELECT t FROM Comment t WHERE t.postId = ?1 ")
     Page<Comment> findByPostId(Integer post_id, Pageable pageable);
 
     void deleteById(Integer integer);

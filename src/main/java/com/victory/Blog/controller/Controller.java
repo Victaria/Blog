@@ -6,6 +6,7 @@ import com.victory.Blog.base.article.ArticleRequest;
 import com.victory.Blog.base.article.ArticleSpecification;
 import com.victory.Blog.base.comment.Comment;
 import com.victory.Blog.base.comment.CommentRepository;
+import com.victory.Blog.base.comment.CommentSpecification;
 import com.victory.Blog.base.tag.PostTag;
 import com.victory.Blog.base.tag.PostTagRepository;
 import com.victory.Blog.base.tag.Tag;
@@ -102,11 +103,11 @@ public class Controller {
         List<String> tags = Arrays.asList(articleRequest.getTags().split(" "));
 
         Article article = new Article();
-        article.setAuthor_id(userRepository.findByEmail((String) session.getAttribute("email")).getId());
+        article.setAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId());
         article.setText(articleRequest.getText());
         article.setTitle(articleRequest.getTitle());
         article.setStatus("public");
-        article.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
+        article.setCreatedAt(new Date(Calendar.getInstance().getTime().getTime()));
 
         articleRepository.save(article);
 
@@ -115,7 +116,7 @@ public class Controller {
             PostTag pt = new PostTag();
 
             if (existTag != null) {
-                pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthor_id()).getId());
+                pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthorId()).getId());
                 pt.setTagId(existTag.getId());
 
             } else {
@@ -123,7 +124,7 @@ public class Controller {
                 tagObj.setName(tag);
                 tagRepository.save(tagObj);
 
-                pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthor_id()).getId());
+                pt.setPostId(articleRepository.findByTitleAndAuthorId(article.getTitle(), article.getAuthorId()).getId());
                 pt.setTagId(tagRepository.findByName(tag).getId());
             }
             postTagRepository.save(pt);
@@ -165,9 +166,9 @@ public class Controller {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     ModelAndView newComment(@PathVariable int id, @ModelAttribute Comment comment, HttpSession session) {
-        comment.setCreated_at(new Date(Calendar.getInstance().getTime().getTime()));
-        comment.setAuthor_id(userRepository.findByEmail((String) session.getAttribute("email")).getId());
-        comment.setPost_id(id);
+        comment.setCreatedAt(new Date(Calendar.getInstance().getTime().getTime()));
+        comment.setAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId());
+        comment.setPostId(id);
         System.out.println(id);
 
         commentRepository.save(comment);
@@ -184,7 +185,7 @@ public class Controller {
     public @ResponseBody
     ModelAndView deleteArticle(@PathVariable int post_id, HttpSession session) {
         int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
+        int postAuthorId = articleRepository.getOne(post_id).getAuthorId();
 
         if (userId == postAuthorId) {
             articleRepository.deleteById(post_id);
@@ -203,8 +204,8 @@ public class Controller {
     public @ResponseBody
     ModelAndView deleteComment(@PathVariable int post_id, @PathVariable int id, HttpSession session) {
         int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
-        int commentAuthorId = commentRepository.getOne(id).getAuthor_id();
+        int postAuthorId = articleRepository.getOne(post_id).getAuthorId();
+        int commentAuthorId = commentRepository.getOne(id).getAuthorId();
 
         System.out.println(userId + "  " + postAuthorId + "  " + commentAuthorId);
 
@@ -226,7 +227,7 @@ public class Controller {
                              @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC)
                                      Pageable pageable) {
         int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleRepository.getOne(post_id).getAuthor_id();
+        int postAuthorId = articleRepository.getOne(post_id).getAuthorId();
 
         if (userId == postAuthorId) {
             ModelAndView mav = new ModelAndView("afterAuth/profile");
@@ -247,9 +248,9 @@ public class Controller {
     @RequestMapping(value = "/articles/{post_id}/edit", method = RequestMethod.POST)
     public @ResponseBody
     ModelAndView putArticle(@PathVariable int post_id, @ModelAttribute Article article) {
-        article.setUpdated_at(new Date(Calendar.getInstance().getTime().getTime()));
+        article.setUpdatedAt(new Date(Calendar.getInstance().getTime().getTime()));
 
-        articleRepository.updateArticle(article.getUpdated_at(), article.getTitle(), article.getText(), post_id);
+        articleRepository.updateArticle(article.getUpdatedAt(), article.getTitle(), article.getText(), post_id);
 
         return new ModelAndView("redirect:/blog/my");
     }
@@ -257,7 +258,7 @@ public class Controller {
     @RequestMapping(value = "/search/articles", method = RequestMethod.GET)
     public @ResponseBody
     ModelAndView findByTags(@RequestParam("tags") String tags, HttpSession session,
-                     @PageableDefault(sort = {"id"},
+                            @PageableDefault(sort = {"id"},
                                     direction = Sort.Direction.DESC, value = 7) Pageable pageable) {
         List<String> tagList = Arrays.asList(tags.split(","));
         Set<PostTag> postTagSet = new LinkedHashSet<>();
@@ -365,6 +366,40 @@ public class Controller {
         mav.addObject("articles", new PageImpl<Article>(articles, pageable, articles.size()));
 
         return mav;
+
+    }
+
+    @RequestMapping(value = "/filter/articles/{id}/comments", method = RequestMethod.GET)
+    public @ResponseBody
+    ModelAndView getFilteredCommentList(@RequestParam("skip") int skip,
+                                        @RequestParam("limit") int limit,
+                                        @RequestParam("author_id") int author_id,
+                                        @RequestParam("sort-field") String sortField,
+                                        @RequestParam("order") String order,
+                                        @PathVariable int id,
+                                        HttpSession session, @PageableDefault(value = 7) Pageable pageable) {
+
+        Sort sort = Sort.by(sortField).ascending();
+
+        if (order.equalsIgnoreCase("desc")) {
+            sort = Sort.by(Sort.Order.desc(sortField));
+        }
+
+        List<Comment> comments = commentRepository.findAll(CommentSpecification.commentAuthorId(author_id), sort);
+
+        ModelAndView mav = new ModelAndView("articles/comments");
+
+        if (session.getAttribute("email") != null) {
+            mav.addObject("user", userRepository.findByEmail((String) session.getAttribute("email")));
+            mav.addObject("post_id", id);
+            mav.addObject("new_comment", new Comment());
+        } else {
+           // mav.addObject("user", null);
+        }
+
+        mav.addObject("comments", new PageImpl<Comment>(comments, pageable, comments.size()));
+
+         return mav;
 
     }
 }

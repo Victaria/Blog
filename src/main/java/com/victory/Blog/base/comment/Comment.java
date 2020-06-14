@@ -17,13 +17,13 @@ public class Comment {
     private String message;
 
     @Column(name = "post_id")
-    private Integer post_id;
+    private Integer postId;
 
     @Column(name = "author_id")
-    private Integer author_id;
+    private Integer authorId;
 
     @Column(name = "created_at")
-    private Date created_at;
+    private Date createdAt;
 
     public Integer getId() {
         return id;
@@ -41,27 +41,27 @@ public class Comment {
         this.message = message;
     }
 
-    public Integer getPost_id() {
-        return post_id;
+    public Integer getPostId() {
+        return postId;
     }
 
-    public void setPost_id(Integer post_id) {
-        this.post_id = post_id;
+    public void setPostId(Integer post_id) {
+        this.postId = post_id;
     }
 
-    public Integer getAuthor_id() {
-        return author_id;
+    public Integer getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthor_id(Integer author_id) {
-        this.author_id = author_id;
+    public void setAuthorId(Integer author_id) {
+        this.authorId = author_id;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date created_at) {
+        this.createdAt = created_at;
     }
 }
