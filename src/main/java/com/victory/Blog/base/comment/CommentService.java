@@ -4,7 +4,7 @@ import com.victory.Blog.base.article.ArticleService;
 import com.victory.Blog.base.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.List;
 
 @Service
 @Transactional
@@ -65,8 +64,8 @@ public class CommentService {
             sort = Sort.by(Sort.Order.desc(sortField));
         }
 
-        List<Comment> comments = commentRepository.findAll(CommentSpecification.commentAuthorId(author_id), sort);
+        Page<Comment> comments = commentRepository.findAll(CommentSpecification.commentAuthorId(author_id), PageRequest.of(skip, limit, sort));
 
-        return new PageImpl<Comment>(comments, pageable, comments.size());
+        return comments;
     }
 }

@@ -6,10 +6,7 @@ import com.victory.Blog.base.tag.Tag;
 import com.victory.Blog.base.tag.TagService;
 import com.victory.Blog.base.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,9 +113,9 @@ public class ArticleService {
             sort = Sort.by(sortField).descending();
         }
 
-        List<Article> articles = articleRepository.findAll(ArticleSpecification.postAuthorId(author_id), sort);
+        Page<Article> articles = articleRepository.findAll(ArticleSpecification.postAuthorId(author_id), PageRequest.of(skip, limit, sort));
 
-        return new PageImpl<Article>(articles, pageable, articles.size());
+        return articles;
     }
 
     public void updateStatusToPublic(Integer id) {
