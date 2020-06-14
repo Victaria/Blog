@@ -130,14 +130,8 @@ public class Controller {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     ModelAndView newComment(@PathVariable int id, @ModelAttribute Comment comment, HttpSession session) {
+
         commentService.createAndSave(comment, session, id);
-
-       /* comment.setCreatedAt(new Date(Calendar.getInstance().getTime().getTime()));
-        comment.setAuthorId(userRepository.findByEmail((String) session.getAttribute("email")).getId());
-        comment.setPostId(id);
-        System.out.println(id);
-
-        commentRepository.save(comment);*/
 
         return new ModelAndView("redirect:/blog/articles/" + id + "/comments");
     }
@@ -153,15 +147,6 @@ public class Controller {
 
         articleService.deleteArticle(post_id, session);
 
-       /* int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleRepository.getOne(post_id).getAuthorId();
-
-        if (userId == postAuthorId) {
-            articleRepository.deleteById(post_id);
-        } else {
-            System.out.println("no rights");
-        }*/
-
         return new ModelAndView("redirect:/blog/my");
     }
 
@@ -174,17 +159,6 @@ public class Controller {
     ModelAndView deleteComment(@PathVariable int post_id, @PathVariable int id, HttpSession session) {
 
         commentService.deleteComment(post_id, id, session);
-       /* int userId = userRepository.findByEmail((String) session.getAttribute("email")).getId();
-        int postAuthorId = articleRepository.getOne(post_id).getAuthorId();
-        int commentAuthorId = commentRepository.getOne(id).getAuthorId();
-
-        System.out.println(userId + "  " + postAuthorId + "  " + commentAuthorId);
-
-        if (userId == postAuthorId || userId == commentAuthorId) {
-            commentRepository.deleteById(id);
-        } else {
-            System.out.println("no rights");
-        }*/
 
         return new ModelAndView("redirect:/blog/articles/" + post_id + "/comments");
     }
@@ -197,7 +171,6 @@ public class Controller {
     ModelAndView editArticle(@PathVariable int post_id, HttpSession session,
                              @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC)
                                      Pageable pageable) {
-
 
         int userId = userService.getByEmail((String) session.getAttribute("email")).getId();
         int postAuthorId = articleService.getById(post_id).get().getAuthorId();
@@ -223,10 +196,7 @@ public class Controller {
     ModelAndView putArticle(@PathVariable int post_id, @ModelAttribute Article article) {
 
         articleService.updateArticle(post_id, article);
-      /*  article.setUpdatedAt(new Date(Calendar.getInstance().getTime().getTime()));
 
-        articleRepository.updateArticle(article.getUpdatedAt(), article.getTitle(), article.getText(), post_id);
-*/
         return new ModelAndView("redirect:/blog/my");
     }
 
@@ -326,7 +296,7 @@ public class Controller {
             mav.addObject("post_id", id);
             mav.addObject("new_comment", new Comment());
         } else {
-            // mav.addObject("user", null);
+            mav.addObject("user", null);
         }
 
         mav.addObject("comments", commentService.filter(skip, limit, author_id, sortField, order, pageable));
