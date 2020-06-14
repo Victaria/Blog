@@ -12,9 +12,9 @@ public class CommentSpecification {
             @Override
             public Predicate toPredicate(Root<Comment> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 Specification<Comment> spec = CommentSpecification.postHasTitle(title);
-                Join<Comment, Article> article = root.join("authorId");
+                Join<Comment, Article> article = root.join("postId");
 
-                return criteriaBuilder.equal(article.get("title"), title);
+                return criteriaBuilder.equal(root.get("article").get("title"), title);
             }
         };
     }

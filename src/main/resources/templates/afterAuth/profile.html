@@ -359,7 +359,7 @@
                     <p th:text="${article.text}"></p>
                 </div>
                 <div class="meta">
-                    <p class="byline" th:text="${article.created_at}"></p>
+                    <p class="byline" th:text="${article.createdAt}"></p>
 
                     <p class="links"><a th:if="${user != null}"
                                         th:href="@{'/blog/articles/' + ${article.id}}"

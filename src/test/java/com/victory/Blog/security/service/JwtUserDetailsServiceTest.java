@@ -3,6 +3,7 @@ package com.victory.Blog.security.service;
 import com.victory.Blog.security.jwt.SignUpRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class JwtUserDetailsServiceTest {
 
-    JwtUserDetailsService userDetailsService = new JwtUserDetailsService();
+    @Autowired
+    JwtUserDetailsService userDetailsService;
 
     @Test
     void loadUserByUsername() {
@@ -34,10 +36,6 @@ class JwtUserDetailsServiceTest {
         userDetailsService.save(signUpRequest);
 
         return signUpRequest.getEmail();
-    }
-
-    @Test
-    void update() {
     }
 
     SignUpRequest getSignUpRequest(){
