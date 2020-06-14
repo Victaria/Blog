@@ -113,7 +113,7 @@ public class Controller {
 
             mav.addObject("articles", articleService.getByAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId(), pageable));
             mav.addObject("user", userService.getByEmail((String) session.getAttribute("email")));
-           // mav.addObject("templates", articleService.getDraftByAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId()));
+            // mav.addObject("templates", articleService.getDraftByAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId()));
 
             return mav;
         } else {
@@ -205,7 +205,7 @@ public class Controller {
 
         Article article = articleService.getById(post_id);
 
-        if (article.getStatus().equals("draft")){
+        if (article.getStatus().equals("draft")) {
             articleService.updateStatusToPublic(post_id);
         } else {
             articleService.updateStatusToDraft(post_id);
