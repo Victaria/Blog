@@ -1,2 +1,2 @@
-#Project "Blog" on Java, using Spring Framework
+# Project "Blog" on Java, using Spring Framework
 
