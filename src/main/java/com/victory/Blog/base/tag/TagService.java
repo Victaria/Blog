@@ -1,25 +1,25 @@
-package com.victory.Blog.base.tag;
+package com.victory.blog.base.tag;
 
-import com.victory.Blog.base.article.Article;
-import com.victory.Blog.base.article.ArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.victory.blog.base.article.Article;
+import com.victory.blog.base.article.ArticleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import java.util.List;
 
 @Service
 @Transactional
 public class TagService {
 
-    @Autowired
-    TagRepository tagRepository;
+    @Inject
+    private TagRepository tagRepository;
 
-    @Autowired
-    PostTagService postTagService;
+    @Inject
+    private PostTagService postTagService;
 
-    @Autowired
-    ArticleService articleService;
+    @Inject
+    private ArticleService articleService;
 
     public void createTag(List<String> tags, Article article) {
 

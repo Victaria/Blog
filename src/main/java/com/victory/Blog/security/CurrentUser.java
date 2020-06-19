@@ -1,4 +1,4 @@
-package com.victory.Blog.security;
+package com.victory.blog.security;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.lang.annotation.*;

@@ -389,7 +389,7 @@
 
 <div class="pagination-div" align="center">
     <span th:if="${articles.hasPrevious()}">
-        <a th:href="@{/blog/my(page=${articles.number-1},size=${articles.size})}">Previous</a>
+        <a th:href="@{/blog/my(page=${articles.number - 1},size=${articles.size})}">Previous</a>
     </span>
     <th:block th:each="i: ${#numbers.sequence(0, articles.totalPages - 1)}">
         <span th:if="${articles.number == i}" class="selected">[[${i}+1]]</span>
@@ -398,7 +398,7 @@
         </span>
     </th:block>
     <span th:if="${articles.hasNext()}">
-        <a th:href="@{/blog/my(page=${articles.number+1},size=${articles.size})}">Next</a>
+        <a th:href="@{/blog/my(page=${articles.number + 1},size=${articles.size})}">Next</a>
     </span>
 </div>
 

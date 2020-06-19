@@ -1,4 +1,4 @@
-package com.victory.Blog.base.comment;
+package com.victory.blog.base.comment;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,5 @@
-package com.victory.Blog.security.config;
+package com.victory.blog.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,18 +17,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.inject.Inject;
+
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
-    @Autowired
+
+    @Inject
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Autowired
+    @Inject
     private UserDetailsService jwtUserDetailsService;
 
-    @Autowired
+    @Inject
     private JwtRequestFilter jwtRequestFilter;
 
     /**
@@ -39,7 +41,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
      * @param auth
      * @throws Exception
      */
-    @Autowired
+    @Inject
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
@@ -80,23 +82,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        /* .csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/articles/{post_id}/comments").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-*/
-       /* httpSecurity
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-                //.and().antMatcher("/articles");*/
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 

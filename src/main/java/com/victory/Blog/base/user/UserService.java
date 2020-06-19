@@ -1,15 +1,16 @@
-package com.victory.Blog.base.user;
+package com.victory.blog.base.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
 
 @Service
 @Transactional
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    @Inject
+    private UserRepository userRepository;
 
     public User getByEmail(String email) {
         return userRepository.findByEmail(email);

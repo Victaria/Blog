@@ -1,16 +1,17 @@
-package com.victory.Blog.security.auth;
+package com.victory.blog.security.auth;
 
-import com.victory.Blog.base.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.victory.blog.base.user.User;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
+
 @Service("emailService")
 public class EmailService extends JavaMailSenderImpl {
 
-    @Autowired
+    @Inject
     private JavaMailSender mailSender;
 
     public void sendMail(String to, String msg) {

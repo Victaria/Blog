@@ -1,17 +1,10 @@
-package com.victory.Blog.base.article;
+package com.victory.blog.base.article;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Date;
-import java.util.Calendar;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -19,8 +12,8 @@ import java.util.List;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ArticleRepositoryTest {
 
-    @Autowired
-    ArticleRepository articleRepository;
+   /* @Inject
+    private ArticleRepository articleRepository;
 
     @Test
     void updateArticle() {
@@ -48,5 +41,5 @@ class ArticleRepositoryTest {
             Assert.assertEquals(testArticle.getStatus(), article.getStatus());
         }
     }
-
+*/
 }

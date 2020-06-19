@@ -1,4 +1,4 @@
-package com.victory.Blog.security.jwt;
+package com.victory.blog.security.jwt;
 
 import java.io.Serializable;
 

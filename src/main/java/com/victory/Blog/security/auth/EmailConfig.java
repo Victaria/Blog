@@ -1,4 +1,4 @@
-package com.victory.Blog.security.auth;
+package com.victory.blog.security.auth;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

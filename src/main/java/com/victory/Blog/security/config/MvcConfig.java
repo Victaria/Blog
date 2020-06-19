@@ -1,4 +1,4 @@
-package com.victory.Blog.security.config;
+package com.victory.blog.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +12,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @EnableWebMvc
 public class MvcConfig extends WebMvcConfigurerAdapter {
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // registry.addViewController("/login").setViewName("authorisation/login");

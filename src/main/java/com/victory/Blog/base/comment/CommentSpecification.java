@@ -1,6 +1,6 @@
-package com.victory.Blog.base.comment;
+package com.victory.blog.base.comment;
 
-import com.victory.Blog.base.article.Article;
+import com.victory.blog.base.article.Article;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;

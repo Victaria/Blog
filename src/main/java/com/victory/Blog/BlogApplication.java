@@ -1,4 +1,4 @@
-package com.victory.Blog;
+package com.victory.blog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

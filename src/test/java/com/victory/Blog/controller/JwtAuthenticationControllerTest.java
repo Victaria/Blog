@@ -1,33 +1,23 @@
-package com.victory.Blog.controller;
+package com.victory.blog.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.victory.Blog.base.user.UserService;
-import com.victory.Blog.security.service.JwtUserDetailsService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class JwtAuthenticationControllerTest {
-
-    @Autowired
+/*
+    @Inject
     private MockMvc mockMvc;
 
-    @Autowired
+    @Inject
     private ObjectMapper objectMapper;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    @Autowired
-    JwtUserDetailsService userDetailsService;
+    @Inject
+    private JwtUserDetailsService userDetailsService;
 
 
     @Test
@@ -41,7 +31,7 @@ class JwtAuthenticationControllerTest {
         this.mockMvc.perform(get("/auth/forgot_password"))
                 .andExpect(status().isOk());
     }
-
+*/
    /* @Test
     void authenticate() throws Exception {
         SignUpRequest signUpRequest = new SignUpRequest();

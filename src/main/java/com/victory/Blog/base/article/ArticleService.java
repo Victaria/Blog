@@ -1,17 +1,16 @@
-package com.victory.Blog.base.article;
+package com.victory.blog.base.article;
 
-import com.victory.Blog.base.tag.PostTag;
-import com.victory.Blog.base.tag.PostTagService;
-import com.victory.Blog.base.tag.Tag;
-import com.victory.Blog.base.tag.TagService;
-import com.victory.Blog.base.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.victory.blog.base.tag.PostTag;
+import com.victory.blog.base.tag.PostTagService;
+import com.victory.blog.base.tag.Tag;
+import com.victory.blog.base.tag.TagService;
+import com.victory.blog.base.user.UserService;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
+import javax.inject.Inject;
 import java.sql.Date;
 import java.util.*;
 
@@ -19,17 +18,17 @@ import java.util.*;
 @Service
 public class ArticleService {
 
-    @Autowired
-    ArticleRepository articleRepository;
+    @Inject
+    private ArticleRepository articleRepository;
 
-    @Autowired
-    UserService userService;
+    @Inject
+    private UserService userService;
 
-    @Autowired
-    TagService tagService;
+    @Inject
+    private TagService tagService;
 
-    @Autowired
-    PostTagService postTagService;
+    @Inject
+    private PostTagService postTagService;
 
     public Article getById(int id) {
         return articleRepository.findById(id).get();
@@ -39,9 +38,9 @@ public class ArticleService {
         return articleRepository.findByTitleAndAuthorId(title, author_id);
     }
 
-    public Article createArticle(ArticleRequest articleRequest, HttpSession session) {
+    public Article createArticle(ArticleRequest articleRequest, String email) {
         Article article = new Article();
-        article.setAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId());
+        article.setAuthorId(userService.getByEmail(email).getId());
         article.setText(articleRequest.getText());
         article.setTitle(articleRequest.getTitle());
         article.setStatus("public");
@@ -66,8 +65,8 @@ public class ArticleService {
         return HttpStatus.OK;
     }
 
-    public HttpStatus deleteArticle(int id, HttpSession session) {
-        int userId = userService.getByEmail((String) session.getAttribute("email")).getId();
+    public HttpStatus deleteArticle(int id,  String email) {
+        int userId = userService.getByEmail(email).getId();
         int postAuthorId = articleRepository.getOne(id).getAuthorId();
 
         if (userId == postAuthorId) {
