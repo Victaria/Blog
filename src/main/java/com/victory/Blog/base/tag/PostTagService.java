@@ -1,9 +1,9 @@
-package com.victory.Blog.base.tag;
+package com.victory.blog.base.tag;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,11 +12,11 @@ import java.util.Set;
 @Transactional
 public class PostTagService {
 
-    @Autowired
-    PostTagRepository postTagRepository;
+    @Inject
+    private PostTagRepository postTagRepository;
 
-    @Autowired
-    TagService tagService;
+    @Inject
+    private TagService tagService;
 
     public PostTag createPostTag(int post_id, int tag_id) {
         PostTag postTag = new PostTag();

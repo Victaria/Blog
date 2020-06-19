@@ -1,14 +1,13 @@
-package com.victory.Blog.controller;
+package com.victory.blog.controller;
 
-import com.victory.Blog.base.user.User;
-import com.victory.Blog.base.user.UserEmail;
-import com.victory.Blog.base.user.UserService;
-import com.victory.Blog.security.auth.EmailService;
-import com.victory.Blog.security.jwt.JwtRequest;
-import com.victory.Blog.security.jwt.JwtTokenUtil;
-import com.victory.Blog.security.jwt.SignUpRequest;
-import com.victory.Blog.security.service.JwtUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.victory.blog.base.user.User;
+import com.victory.blog.base.user.UserEmail;
+import com.victory.blog.base.user.UserService;
+import com.victory.blog.security.auth.EmailService;
+import com.victory.blog.security.jwt.JwtRequest;
+import com.victory.blog.security.jwt.JwtTokenUtil;
+import com.victory.blog.security.jwt.SignUpRequest;
+import com.victory.blog.security.service.JwtUserDetailsService;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,31 +20,32 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import redis.clients.jedis.Jedis;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin
 public class JwtAuthenticationController {
-    @Autowired
+    @Inject
     private AuthenticationManager authenticationManager;
 
-    @Autowired
+    @Inject
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
+    @Inject
     private JwtUserDetailsService userDetailsService;
 
-    @Autowired
+    @Inject
     private UserService userService;
 
-    Jedis jedis = new Jedis("127.0.0.1");
+   // @Inject
+   // private RedisServer redis;
+    private Jedis jedis = new Jedis("127.0.0.1");
 
-    @Autowired
+    @Inject
     private EmailService mailer = new EmailService();
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public @ResponseBody
-    ModelAndView getLoginForm() {
+    public ModelAndView getLoginForm() {
         ModelAndView mav = new ModelAndView("authorisation/login", "authenticationRequest", new JwtRequest());
         mav.addObject("error", "");
         return mav;
@@ -85,15 +85,13 @@ public class JwtAuthenticationController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public @ResponseBody
-    ModelAndView logOut(HttpSession session) {
+    public ModelAndView logOut(HttpSession session) {
         session.removeAttribute("email");
         return new ModelAndView("redirect:/login", "authenticationRequest", new JwtRequest());
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public @ResponseBody
-    ModelAndView getRegisterForm() {
+    public ModelAndView getRegisterForm() {
         ModelAndView mav = new ModelAndView("authorisation/register", "user", new User());
         return mav;
     }
@@ -103,8 +101,7 @@ public class JwtAuthenticationController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public @ResponseBody
-    ModelAndView saveUser(@ModelAttribute SignUpRequest signUpRequest) throws Exception {
+    public ModelAndView saveUser(@ModelAttribute SignUpRequest signUpRequest) throws Exception {
 
         if (userService.getByEmail(signUpRequest.getEmail()) == null) {
 
@@ -130,8 +127,7 @@ public class JwtAuthenticationController {
 
     @Transactional
     @RequestMapping(value = "/auth/confirm/{hash}", method = RequestMethod.GET)
-    public @ResponseBody
-    ModelAndView validateAccount(@PathVariable String hash) {
+    public ModelAndView validateAccount(@PathVariable String hash) {
         if (jedis.exists(hash)) {
             System.out.println(jedis.get(hash));
 
@@ -169,15 +165,13 @@ public class JwtAuthenticationController {
 
     @Transactional
     @GetMapping(value = "/auth/forgot_password")
-    public @ResponseBody
-    ModelAndView getForm() {
+    public ModelAndView getForm() {
         return new ModelAndView("recovery/passwordForgotForm", "user_email", new UserEmail());
     }
 
     @Transactional
     @RequestMapping(value = "/auth/forgot_password", method = RequestMethod.POST)
-    public @ResponseBody
-    ModelAndView sendToMailPassword(@ModelAttribute UserEmail user_email) {
+    public ModelAndView sendToMailPassword(@ModelAttribute UserEmail user_email) {
         String email = user_email.getEmail();
         if (!email.isEmpty()) {
             User user = userService.getByEmail(email);
@@ -204,8 +198,7 @@ public class JwtAuthenticationController {
 
     @Transactional
     @GetMapping(value = "/auth/reset/{hash}")
-    public @ResponseBody
-    ModelAndView sendToMailPassword(@PathVariable String hash, HttpSession httpSession) {
+    public ModelAndView sendToMailPassword(@PathVariable String hash, HttpSession httpSession) {
         if (jedis.exists(hash)) {
             User user = userService.getById(Integer.parseInt(jedis.get(hash)));
 
@@ -218,8 +211,7 @@ public class JwtAuthenticationController {
 
     @Transactional
     @PostMapping(value = "/auth/reset")
-    public @ResponseBody
-    ModelAndView saveNewPassword(@ModelAttribute JwtRequest jwtRequest, HttpSession httpSession) {
+    public ModelAndView saveNewPassword(@ModelAttribute JwtRequest jwtRequest, HttpSession httpSession) {
         if (!jwtRequest.getPassword().isEmpty()) {
             User user = userService.getByEmail(httpSession.getAttribute("email").toString());
             user.setPassword(jwtRequest.getPassword());

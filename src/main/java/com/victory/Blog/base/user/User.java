@@ -1,11 +1,9 @@
-package com.victory.Blog.base.user;
+package com.victory.blog.base.user;
 
-import com.victory.Blog.base.article.Article;
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Entity

@@ -1,4 +1,4 @@
-package com.victory.Blog.base.tag;
+package com.victory.blog.base.tag;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package com.victory.Blog.base.article;
+package com.victory.blog.base.article;
 
 import org.springframework.data.jpa.domain.Specification;
 

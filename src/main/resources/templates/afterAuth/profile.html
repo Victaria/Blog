@@ -3,7 +3,6 @@
       xmlns:spring="http://java.sun.com/xml/ns/javaee"
       xsi:schemaLocation="http://www.thymeleaf.org " uri="http://www.springframework.org/tags">
 <head>
-    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="keywords" content=""/>
     <!-- <link th:href="@{../basicStyle.css}" rel="stylesheet"/>-->
@@ -324,20 +323,6 @@
     <div id="page">
         <br>
         <p>Create new post </p>
-        <!-- <div>
-             <form>
-                 <select class="form-control" id="posts_draft">
-                     <option value="0">select post</option>
-                     <option th:each="template : ${templates}" th:value="${template.id}"
-                             th:text="${template.title}"></option>
-                     <script>
-                         $("#posts_draft").on('change', function () {
-                             $("#title_input").val($("#posts_draft option:selected").text())
-                         });
-                     </script>
-                 </select>
-             </form>
-         </div> -->
 
         <form th:if="${old_article == null}" th:action="@{/blog/articles}" th:object="${articleRequest}" method="post">
             <p><textarea th:field="*{title}" id="title_input" style="resize: none; width: 260px; height: 20px"
@@ -404,7 +389,7 @@
 
 <div class="pagination-div" align="center">
     <span th:if="${articles.hasPrevious()}">
-        <a th:href="@{/blog/my(page=${articles.number-1},size=${articles.size})}">Previous</a>
+        <a th:href="@{/blog/my(page=${articles.number - 1},size=${articles.size})}">Previous</a>
     </span>
     <th:block th:each="i: ${#numbers.sequence(0, articles.totalPages - 1)}">
         <span th:if="${articles.number == i}" class="selected">[[${i}+1]]</span>
@@ -413,7 +398,7 @@
         </span>
     </th:block>
     <span th:if="${articles.hasNext()}">
-        <a th:href="@{/blog/my(page=${articles.number+1},size=${articles.size})}">Next</a>
+        <a th:href="@{/blog/my(page=${articles.number + 1},size=${articles.size})}">Next</a>
     </span>
 </div>
 

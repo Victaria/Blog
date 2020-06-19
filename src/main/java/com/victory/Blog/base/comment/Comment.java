@@ -1,6 +1,4 @@
-package com.victory.Blog.base.comment;
-
-import com.victory.Blog.base.article.Article;
+package com.victory.blog.base.comment;
 
 import javax.persistence.*;
 import java.sql.Date;

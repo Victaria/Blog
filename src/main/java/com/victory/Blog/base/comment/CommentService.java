@@ -1,8 +1,7 @@
-package com.victory.Blog.base.comment;
+package com.victory.blog.base.comment;
 
-import com.victory.Blog.base.article.ArticleService;
-import com.victory.Blog.base.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.victory.blog.base.article.ArticleService;
+import com.victory.blog.base.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,37 +10,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
+import javax.inject.Inject;
 import java.sql.Date;
 import java.util.Calendar;
 
 @Service
 @Transactional
 public class CommentService {
-    @Autowired
-    CommentRepository commentRepository;
 
-    @Autowired
-    UserService userService;
+    @Inject
+    private CommentRepository commentRepository;
 
-    @Autowired
-    ArticleService articleService;
+    @Inject
+    private UserService userService;
+
+    @Inject
+    private ArticleService articleService;
 
     public Page<Comment> getByPostId(Integer post_id, Pageable pageable) {
 
         return commentRepository.findByPostId(post_id, pageable);
     }
 
-    public Comment createAndSave(Comment comment, HttpSession session, int post_id) {
+    public Comment createAndSave(Comment comment, String email, int post_id) {
         comment.setCreatedAt(new Date(Calendar.getInstance().getTime().getTime()));
-        comment.setAuthorId(userService.getByEmail((String) session.getAttribute("email")).getId());
+        comment.setAuthorId(userService.getByEmail(email).getId());
         comment.setPostId(post_id);
 
         return commentRepository.save(comment);
     }
 
-    public HttpStatus deleteComment(int post_id, int id, HttpSession session) {
-        int userId = userService.getByEmail((String) session.getAttribute("email")).getId();
+    public HttpStatus deleteComment(int post_id, int id, String email) {
+        int userId = userService.getByEmail(email).getId();
         int postAuthorId = articleService.getById(post_id).getAuthorId();
         int commentAuthorId = commentRepository.getOne(id).getAuthorId();
 

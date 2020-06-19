@@ -1,4 +1,4 @@
-package com.victory.Blog.security.jwt;
+package com.victory.blog.security.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;

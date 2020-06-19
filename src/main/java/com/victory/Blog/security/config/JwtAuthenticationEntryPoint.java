@@ -1,4 +1,4 @@
-package com.victory.Blog.security.config;
+package com.victory.blog.security.config;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

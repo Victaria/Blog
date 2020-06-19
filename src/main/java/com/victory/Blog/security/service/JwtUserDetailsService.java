@@ -1,9 +1,8 @@
-package com.victory.Blog.security.service;
+package com.victory.blog.security.service;
 
-import com.victory.Blog.base.user.User;
-import com.victory.Blog.base.user.UserRepository;
-import com.victory.Blog.security.jwt.SignUpRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.victory.blog.base.user.User;
+import com.victory.blog.base.user.UserRepository;
+import com.victory.blog.security.jwt.SignUpRequest;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.sql.Date;
 import java.util.Calendar;
 
@@ -18,15 +18,17 @@ import java.util.Calendar;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-    @Autowired
+    @Inject
     private UserRepository userRepository;
 
-    @Autowired
+    @Inject
     private PasswordEncoder bcryptEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         User currentUser = userRepository.findByEmail(email);
+
         if (currentUser == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }

@@ -1,4 +1,4 @@
-package com.victory.Blog.base.user;
+package com.victory.blog.base.user;
 
 public class UserEmail {
     private String email;

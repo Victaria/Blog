@@ -1,4 +1,4 @@
-package com.victory.Blog.security.jwt;
+package com.victory.blog.security.jwt;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
