@@ -6,7 +6,6 @@ import com.victory.blog.base.tag.Tag;
 import com.victory.blog.base.tag.TagService;
 import com.victory.blog.base.user.UserService;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,15 +56,13 @@ public class ArticleService {
         return articleRepository.findDraftByAuthorId(author_id);
     }
 
-    public HttpStatus updateArticle(int id, Article article) {
+    public void updateArticle(int id, Article article) {
         article.setUpdatedAt(new Date(Calendar.getInstance().getTime().getTime()));
 
         articleRepository.updateArticle(article.getUpdatedAt(), article.getTitle(), article.getText(), id);
-
-        return HttpStatus.OK;
     }
 
-    public HttpStatus deleteArticle(int id,  String email) {
+    public void deleteArticle(int id, String email) {
         int userId = userService.getByEmail(email).getId();
         int postAuthorId = articleRepository.getOne(id).getAuthorId();
 
@@ -74,8 +71,6 @@ public class ArticleService {
         } else {
             System.out.println("no rights");
         }
-
-        return HttpStatus.OK;
     }
 
     public Page<Article> getPublicArticles(Pageable pageable) {
@@ -98,9 +93,8 @@ public class ArticleService {
                 articleSet.add(articleRepository.findById(postTag.getPostId()).get());
             }
         }
-        Page<Article> articlePage = new PageImpl<Article>(new ArrayList<>(articleSet), pageable, articleSet.size());
 
-        return articlePage;
+        return new PageImpl<Article>(new ArrayList<>(articleSet), pageable, articleSet.size());
     }
 
     public Page<Article> filter(int skip, int limit, int author_id, String sortField, String order,

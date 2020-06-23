@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +32,7 @@ public class CommentService {
     }
 
     public Comment createAndSave(Comment comment, String email, int post_id) {
+
         comment.setCreatedAt(new Date(Calendar.getInstance().getTime().getTime()));
         comment.setAuthorId(userService.getByEmail(email).getId());
         comment.setPostId(post_id);
@@ -40,7 +40,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public HttpStatus deleteComment(int post_id, int id, String email) {
+    public void deleteComment(int post_id, int id, String email) {
         int userId = userService.getByEmail(email).getId();
         int postAuthorId = articleService.getById(post_id).getAuthorId();
         int commentAuthorId = commentRepository.getOne(id).getAuthorId();
@@ -49,10 +49,8 @@ public class CommentService {
 
         if (userId == postAuthorId || userId == commentAuthorId) {
             commentRepository.deleteById(id);
-            return HttpStatus.OK;
         } else {
             System.out.println("no rights");
-            return HttpStatus.NOT_IMPLEMENTED;
         }
     }
 
@@ -64,8 +62,6 @@ public class CommentService {
             sort = Sort.by(Sort.Order.desc(sortField));
         }
 
-        Page<Comment> comments = commentRepository.findAll(CommentSpecification.commentAuthorId(author_id), PageRequest.of(skip, limit, sort));
-
-        return comments;
+        return commentRepository.findAll(CommentSpecification.commentAuthorId(author_id), PageRequest.of(skip, limit, sort));
     }
 }

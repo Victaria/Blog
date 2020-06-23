@@ -28,14 +28,14 @@ public class EmailService extends JavaMailSenderImpl {
     public void mailForReset(User user, String token) {
         sendMail(user.getEmail(), "Dear " + user.getFirstname()
                 + ", here is your link for password changing." + '\n'
-                + "Follow this link: " + "http://localhost:8080/auth/reset/" + token + '\n'
+                + "Follow this link: " + '\n' + "http://localhost:8080/auth/reset/" + token + '\n'
                 + "If it was not you, please, ignore this message.");
     }
 
     public void mailForRegistration(User user, String token) {
         sendMail(user.getEmail(), "Dear " + user.getFirstname()
                 + ", please, confirm your email. This link is valid for 24 hours." + '\n'
-                + "Follow this link: " + "http://localhost:8080/auth/confirm/" + token);
+                + "Follow this link: " + '\n' + "http://localhost:8080/auth/confirm/" + token);
     }
 
 }
