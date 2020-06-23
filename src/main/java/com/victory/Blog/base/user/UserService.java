@@ -17,6 +17,6 @@ public class UserService {
     }
 
     public User getById(int id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No user with such id."));
     }
 }

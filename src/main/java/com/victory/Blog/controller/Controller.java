@@ -277,7 +277,7 @@ public class Controller {
             mav.addObject("user", userService.getByEmail((String) session.getAttribute("email")));
         }
 
-        mav.addObject("articles", articleService.filter(skip, limit, author_id, sortField, order, pageable));
+        mav.addObject("articles", articleService.filter(skip, limit, author_id, sortField, order));
 
         return mav;
 
@@ -302,7 +302,7 @@ public class Controller {
             mav.addObject("user", null);
         }
 
-        mav.addObject("comments", commentService.filter(skip, limit, author_id, sortField, order, pageable));
+        mav.addObject("comments", commentService.filter(skip, limit, author_id, sortField, order));
 
         return mav;
     }

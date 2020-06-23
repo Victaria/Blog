@@ -30,7 +30,7 @@ public class ArticleService {
     private PostTagService postTagService;
 
     public Article getById(int id) {
-        return articleRepository.findById(id).get();
+        return articleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("No article with such id."));
     }
 
     public Article getArticleByTitleAndAuthorId(String title, int author_id) {
@@ -90,15 +90,14 @@ public class ArticleService {
             System.out.println(postTagSet.toString());
 
             for (PostTag postTag : postTagSet) {
-                articleSet.add(articleRepository.findById(postTag.getPostId()).get());
+                articleSet.add(articleRepository.findById(postTag.getPostId()).orElseThrow(() -> new IllegalArgumentException("No article with such id.")));
             }
         }
 
         return new PageImpl<Article>(new ArrayList<>(articleSet), pageable, articleSet.size());
     }
 
-    public Page<Article> filter(int skip, int limit, int author_id, String sortField, String order,
-                                Pageable pageable) {
+    public Page<Article> filter(int skip, int limit, int author_id, String sortField, String order) {
 
         Sort sort = Sort.by(sortField).ascending();
 
@@ -106,9 +105,7 @@ public class ArticleService {
             sort = Sort.by(sortField).descending();
         }
 
-        Page<Article> articles = articleRepository.findAll(ArticleSpecification.postAuthorId(author_id), PageRequest.of(skip, limit, sort));
-
-        return articles;
+        return articleRepository.findAll(ArticleSpecification.postAuthorId(author_id), PageRequest.of(skip, limit, sort));
     }
 
     public void updateStatusToPublic(Integer id) {

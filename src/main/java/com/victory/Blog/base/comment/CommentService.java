@@ -27,7 +27,6 @@ public class CommentService {
     private ArticleService articleService;
 
     public Page<Comment> getByPostId(Integer post_id, Pageable pageable) {
-
         return commentRepository.findByPostId(post_id, pageable);
     }
 
@@ -54,8 +53,7 @@ public class CommentService {
         }
     }
 
-    public Page<Comment> filter(int skip, int limit, int author_id, String sortField, String order,
-                                Pageable pageable) {
+    public Page<Comment> filter(int skip, int limit, int author_id, String sortField, String order) {
         Sort sort = Sort.by(sortField).ascending();
 
         if (order.equalsIgnoreCase("desc")) {
